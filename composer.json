@@ -1,8 +1,15 @@
 {
   "name": "esijafari2012/parsianPay",
-  "description": "description",
+  "description": "Iranian parsian bank payment gateways handler for laravel based applications",
+  "keywords": [
+    "parsian payment",
+    "parsian bank",
+    "online payment",
+    "parsian gateway"
+  ],
+  "type": "library",
+  "license": "MIT",
   "minimum-stability": "stable",
-  "license": "proprietary",
   "authors": [
     {
       "name": "esmaeil jafari",
