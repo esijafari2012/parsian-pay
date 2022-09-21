@@ -16,6 +16,11 @@
       "email": "esijafari2012@gmail.com"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "Esijafari2012\\ParsianPay\\": "src/"
+    }
+  },
   "require": {
     "php": "^7.1",
     "ext-soap": "*"
