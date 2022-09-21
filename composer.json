@@ -1,12 +1,12 @@
 {
-  "name": "vendor_name/parsianPay",
+  "name": "esijafari2012/parsianPay",
   "description": "description",
   "minimum-stability": "stable",
   "license": "proprietary",
   "authors": [
     {
-      "name": "esmaeil",
-      "email": "email@example.com"
+      "name": "esmaeil jafari",
+      "email": "esijafari2012@gmail.com"
     }
   ],
   "require": {
