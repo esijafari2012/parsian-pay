@@ -24,12 +24,10 @@ $pIPG->startPayment($OrderId,$Amount,$CallbackUrl);
   
 $pIPG=new ParsianIPG('scsdsdfbdsthsgfnfgndg');//set parsian pin
 $getCallback = $pIPG->callback();
-$Code    = $getCallback->responseCode ?? -1;
-$Message = $getCallback->responseMessage ?? 'Error';
-
-if($Code == 0){
+ 
+if($getCallback['Status'] == 0){
     die(' Payment OK ');
 }
 
-echo $Message;
+echo $getCallback['Message'];
 ```

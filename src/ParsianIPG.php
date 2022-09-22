@@ -3,6 +3,7 @@
 
 namespace Esijafari2012\ParsianPay;
 
+use Esijafari2012\ParsianPay\Entities\CallbackPay;
 use Esijafari2012\ParsianPay\Entities\PinPayment;
 use nusoap_client;
 
@@ -13,6 +14,7 @@ use nusoap_client;
  */
 class ParsianIPG
 {
+    use Errors;
 
     /**
      * Url of parsian gateway web service
@@ -84,7 +86,7 @@ class ParsianIPG
         $client->decode_utf8 = FALSE;
         $err = $client->getError();
         if ($err) {
-            throw new ParsianErrorException( -1);
+            throw new ParsianErrorException( -1,$err);
         }
 
         $parameters = [
@@ -98,7 +100,7 @@ class ParsianIPG
         $result = $client->call('SalePayment', ['requestData' => $parameters]);
         $err = $client->getError();
         if ($err) {
-            throw new ParsianErrorException( -1);
+            throw new ParsianErrorException( -1,$err);
         } else {
             $Token = $result['SalePaymentRequestResult']['Token'];
             $Status = $result['SalePaymentRequestResult']['Status'];
@@ -159,8 +161,66 @@ class ParsianIPG
 
 
     /**
-     * call after bank callback for verify
-     * @return string
+     * @param CallbackPay $cbPay
+     * @return array
+     * @throws ParsianErrorException
+     */
+    protected function callbackRequest( CallbackPay $cbPay){
+
+        if (empty($cbPay->getToken()) or !is_numeric($cbPay->getStatus())) {
+            throw new ParsianErrorException( -3);
+        }
+        if ($cbPay->getStatus() != 0 || !$cbPay->getRRN()) {
+            throw new ParsianErrorException($cbPay->getStatus());
+        }
+
+        if ($cbPay->getRRN() > 0 and $cbPay->getStatus() == 0) {
+
+            $client = new nusoap_client(self::$ConfirmService, 'wsdl');
+            $client->soap_defencoding = self::$Encoding;
+            $client->decode_utf8 = FALSE;
+            $err = $client->getError();
+            if ($err) {
+                throw new ParsianErrorException( -1,$err);
+            }
+
+            $parameters = [
+                'LoginAccount' =>  $cbPay->getPin(),
+                'Token' => $cbPay->getToken()
+            ];
+
+            $result = $client->call('ConfirmPayment', ['requestData' => $parameters]);
+            if ($client->fault) {
+                $err = $client->getError();
+                throw new ParsianErrorException( -1,$err);
+            } else {
+
+                // update database
+
+                return  [
+                    'Status' => $result['ConfirmPaymentResult']['Status'] ?? -123456789,
+                    'Token' => $result['ConfirmPaymentResult']['Token'],
+                    'Message' => $result['ConfirmPaymentResult']['Message']  ,
+                    'RRN' => $result['ConfirmPaymentResult']['RRN'],
+                    'CardNumberMasked' => $result['ConfirmPaymentResult']['CardNumberMasked']
+                ] ;
+            }
+        } else {
+
+            // update database
+            return [
+                'Status' => $cbPay->getStatus(),
+                'Token' => $cbPay->getToken(),
+                'Message' => self::codeToMessage($cbPay->getStatus()),
+                'RRN' => $cbPay->getRRN(),
+                'CardNumberMasked' => ''
+            ] ;
+        }
+    }
+
+
+    /**
+     * @return array
      */
     public   function callback()
     {
@@ -168,81 +228,35 @@ class ParsianIPG
         $status = $_POST["status"] ?? -1;
         $RRN = $_POST["RRN"] ?? null;
 
-
-        if (empty($token) or !is_numeric($status)) {
-            throw new ParsianErrorException( -3);
-        }
-        if ($status != 0 || !$RRN) {
-            throw new ParsianErrorException($status);
-        }
+        $cbPay=new CallbackPay();
+        $cbPay->setPin($this->pin);
+        $cbPay->setStatus($status);
+        $cbPay->setRRN($RRN);
+        $cbPay->setToken($token);
 
 
-
-        if ($RRN > 0 and $status == 0) {
-
-            $client = new nusoap_client(self::$ConfirmService, 'wsdl');
-            $client->soap_defencoding = self::$Encoding;
-            $client->decode_utf8 = FALSE;
-            $err = $client->getError();
-            if ($err) {
-                return self::response(-1, $err, []);
-            }
-
-            $parameters = [
-                'LoginAccount' =>  $this->pin,
-                'Token' => $token
-            ];
-
-            $result = $client->call('ConfirmPayment', ['requestData' => $parameters]);
-            if ($client->fault) {
-                $err = $client->getError();
-                return self::response(-1, $err, []);
-            } else {
-
-                // update database
-
-                return self::response($Status, self::errors($Status), [
-                    'Status' => $result['ConfirmPaymentResult']['Status'] ?? -123456789,
-                    'Token' => $result['ConfirmPaymentResult']['Token'],
-                    'Message' => $result['ConfirmPaymentResult']['Message'] ?? self::errors($Status),
-                    'RRN' => $result['ConfirmPaymentResult']['RRN'],
-                    'CardNumberMasked' => $result['ConfirmPaymentResult']['CardNumberMasked']
-                ]);
-            }
-        } else {
-
-            // update database
-
-            return self::response($Status, self::errors($Status), [
-                'Status' => $Status,
-                'Token' => $Token,
-                'Message' => self::errors($Status),
-                'RRN' => $RRN,
+        try {
+            $res=$this->callbackRequest($cbPay);
+            return  $res;
+        } catch (ParsianErrorException $e) {
+            return [
+                'Status' => $cbPay->getStatus(),
+                'Token' => $cbPay->getToken(),
+                'Message' => self::codeToMessage($cbPay->getStatus()),
+                'RRN' => $cbPay->getRRN(),
                 'CardNumberMasked' => ''
-            ]);
+            ] ;
+
+        } catch (\Exception $e) {
+            return [
+                'Status' => $cbPay->getStatus(),
+                'Token' => $cbPay->getToken(),
+                'Message' => self::codeToMessage(-1,$e->getMessage()),
+                'RRN' => $cbPay->getRRN(),
+                'CardNumberMasked' => ''
+            ] ;
         }
-
     }
 
 
-
-
-
-
-
-    /**
-     * generate output
-     * @param int $Status
-     * @param string $Message
-     * @param array $Items
-     * @return string
-     */
-    private static function response($Status = -1, $Message = '', $Items = []){
-        $data = [
-            'responseCode' => $Status,
-            'responseMessage' => $Message,
-            'responseItems' => $Items
-        ];
-        return json_encode($data);
-    }
 }
