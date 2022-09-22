@@ -44,13 +44,16 @@ echo $cr->getMessage();
 # Example For reverse
 ``` bash
 use Esijafari2012\ParsianPay\Reverse;
+use Esijafari2012\ParsianPay\Entities\PeyResult;
 
 $pIPG=new Reverse('scsdsdfbdsthsgfnfgndg');//set parsian pin
-$getCallback = $pIPG->reverse(12545485);//reverse token payment
+$pr = $pIPG->reverse(12545485);//reverse token payment
  
-if($getCallback['Status'] == 0){
-    die(' Reverse Payment OK ');
+if($pr instanceof PeyResult){
+    if(($pr->getStatus()==0){
+        die(' Reverse Payment OK ');
+    }
 }
 
-echo $getCallback['Message'];
+echo $pr->getMessage();
 ```

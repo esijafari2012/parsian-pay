@@ -4,6 +4,7 @@
 namespace Esijafari2012\ParsianPay;
 
 
+use Esijafari2012\ParsianPay\Entities\PeyResult;
 use Esijafari2012\ParsianPay\Entities\ReverseToken;
 
 /**
@@ -14,12 +15,18 @@ class Reverse  extends ParsianIPG
 {
 
     /**
+     * @var PeyResult|null
+     */
+    private $pr;
+
+    /**
      * Reverse constructor.
      * @param string $pin
      */
     public function __construct(string $pin="")
     {
         parent::__construct($pin);
+        $this->pr=null;
     }
 
 
@@ -63,7 +70,7 @@ class Reverse  extends ParsianIPG
 
     /**
      * @param int $token
-     * @return array
+     * @return PeyResult|null
      */
     public   function  reverse(int $token)
     {
@@ -71,22 +78,26 @@ class Reverse  extends ParsianIPG
         $rvToken->setPin($this->pin);
         $rvToken->setToken($token);
 
+        $this->pr=null;
+
         try {
             $res=$this->reverseRequest($rvToken);
-            return  $res;
+            $this->pr=new PeyResult( $res);
         } catch (ParsianErrorException $e) {
-            return [
+            $this->pr=new PeyResult( [
                 'Status' => $e->getCode(),
                 'Token' => $rvToken->getToken(),
                 'Message' => $e->getMessage(),
-            ] ;
+            ]) ;
 
         } catch (\Exception $e) {
-            return [
+            $this->pr=new PeyResult( [
                 'Status' => -1,
                 'Token' => $rvToken->getToken(),
                 'Message' => self::codeToMessage(-1,$e->getMessage()),
-            ] ;
+            ]) ;
         }
+
+        return  $this->pr;
     }
 }
