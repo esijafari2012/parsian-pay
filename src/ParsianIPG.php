@@ -74,7 +74,7 @@ class ParsianIPG
 
     /**
      * @param PinPayment $req
-     * @return string
+     * @return array
      * @throws ParsianErrorException
      */
     protected function sendPayRequest(PinPayment $req){
@@ -104,15 +104,16 @@ class ParsianIPG
             $Status = $result['SalePaymentRequestResult']['Status'];
             $Message = $result['SalePaymentRequestResult']['Message'];
 
-            // insert into database
-
-            return self::response($Status, $Message,[
-                'Status' => $Status,
-                'Token' => $Token,
-                'Message' => $Message
-            ]);
+            if(($Status==0)&&($Token>0)){
+                return array(
+                    'Status' => $Status,
+                    'Token' => $Token,
+                    'Message' => $Message
+                );
+            }else{
+                throw new ParsianErrorException( $Status,$Message);
+            }
         }
-
     }
 
 
@@ -121,6 +122,7 @@ class ParsianIPG
      * @param int $amount
      * @param string $callbackUrl
      * @param string $additionalData
+     * @return array
      */
     public function startPayment(int $orderId,int $amount,string $callbackUrl,string $additionalData) {
         $req = new PinPayment();
@@ -129,37 +131,54 @@ class ParsianIPG
         $req->setPin($this->pin);
         $req->setCallbackUrl($callbackUrl);
         $req->setAdditionalData($additionalData);
-        $req->setAuthority(0);
-        $req->setStatus(1);
+
         try {
             $res=$this->sendPayRequest($req);
-            $getPay  = json_decode($res);
-            $Code    = $getPay->responseCode ?? -1;
-            $Message = $getPay->responseMessage ?? 'Error';
-
-            if($Code == 0){
-                $Token = $getPay->responseItems->Token ?? '';
+            if(($res['Status']==0)&&($res['Token']>0)){
+                $Token = $res['Token'];
                 if(!empty($Token)){
                     header('LOCATION: '.self::$gate_url . $Token);
                     exit;
                 }
             }
-        } catch (Exception $e) {
-
+            return $res;
+        } catch (ParsianErrorException $e) {
+            return array(
+                'Status' => $e->getCode(),
+                'Token' => 0,
+                'Message' => $e->getMessage()
+            );
+        } catch (\Exception $e) {
+            return array(
+                'Status' => $e->getCode(),
+                'Token' => 0,
+                'Message' => $e->getMessage()
+            );
         }
     }
 
 
     /**
      * call after bank callback for verify
-     * @param $RRN -> reference number
-     * @param $Token
-     * @param $Status
      * @return string
      */
-    public   function callback($RRN, $Token, $Status)
+    public   function callback()
     {
-        if ($RRN > 0 and $Status == 0) {
+        $token = $_POST["Token"] ?? null;
+        $status = $_POST["status"] ?? -1;
+        $RRN = $_POST["RRN"] ?? null;
+
+
+        if (empty($token) or !is_numeric($status)) {
+            throw new ParsianErrorException( -3);
+        }
+        if ($status != 0 || !$RRN) {
+            throw new ParsianErrorException($status);
+        }
+
+
+
+        if ($RRN > 0 and $status == 0) {
 
             $client = new nusoap_client(self::$ConfirmService, 'wsdl');
             $client->soap_defencoding = self::$Encoding;
@@ -171,7 +190,7 @@ class ParsianIPG
 
             $parameters = [
                 'LoginAccount' =>  $this->pin,
-                'Token' => $Token
+                'Token' => $token
             ];
 
             $result = $client->call('ConfirmPayment', ['requestData' => $parameters]);

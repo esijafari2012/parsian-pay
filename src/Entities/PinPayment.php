@@ -35,16 +35,6 @@ class PinPayment
     public $additionalData;
 
     /**
-     * @var mixed
-     */
-    public $authority; // long
-
-    /**
-     * @var mixed
-     */
-    public $status;
-
-    /**
      * @return string
      */
     public function getPin(): string
@@ -106,38 +96,6 @@ class PinPayment
     public function setCallbackUrl(string $callbackUrl)
     {
         $this->callbackUrl = $callbackUrl;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAuthority()
-    {
-        return $this->authority;
-    }
-
-    /**
-     * @param mixed $authority
-     */
-    public function setAuthority($authority)
-    {
-        $this->authority = $authority;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * @param mixed $status
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
     }
 
     /**

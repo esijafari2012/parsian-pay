@@ -22,18 +22,20 @@ class ParsianErrorException extends \Exception
     /**
      * ParsianErrorException constructor.
      * @param int $code
+     * @param string $message
      */
-    public function __construct(int $code = -32768)
+    public function __construct(int $code = -32768,string $message="")
     {
-        parent::__construct($this->codeToMessage($code), $code);
+        parent::__construct($this->codeToMessage($code,$message), $code);
     }
 
 
     /**
      * @param int $code
+     * @param string $message
      * @return string
      */
-    private function codeToMessage(int $code)
+    private function codeToMessage(int $code,string $message="")
     {
         $errors = [
             93 => 'امکان تکمیل تراکنش وجود ندارد.',
@@ -136,7 +138,9 @@ class ParsianErrorException extends \Exception
             -1552 => 'برگشت تراکنش مجاز نمی باشد.',
             -32768 => 'خطای ناشناخته رخ داده است.',
         ];
-
-        return !empty($errors[$code]) ? $errors[$code] : " خطای تعریف نشده! کد خطا:$code";
+        $res=$message;
+        if(isset($errors[$code])) $res=$errors[$code];
+        if(empty($res)) $res =  " خطای تعریف نشده! کد خطا:$code";
+        return $res;
     }
 }
