@@ -75,15 +75,16 @@ class ParsianIPG
     /**
      * @param PinPayment $req
      * @return string
+     * @throws ParsianErrorException
      */
     protected function sendPayRequest(PinPayment $req){
+
         $client = new nusoap_client(self::$SaleServiceAddress, 'wsdl');
         $client->soap_defencoding = self::$Encoding;
         $client->decode_utf8 = FALSE;
         $err = $client->getError();
         if ($err) {
-            throw new ParsianErrorException($errorMessage, $status);
-            return self::response(-1, $err, []);
+            throw new ParsianErrorException( -1);
         }
 
         $parameters = [
@@ -97,7 +98,7 @@ class ParsianIPG
         $result = $client->call('SalePayment', ['requestData' => $parameters]);
         $err = $client->getError();
         if ($err) {
-            return self::response(-1, $err, []);
+            throw new ParsianErrorException( -1);
         } else {
             $Token = $result['SalePaymentRequestResult']['Token'];
             $Status = $result['SalePaymentRequestResult']['Status'];

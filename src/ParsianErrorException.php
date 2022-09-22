@@ -10,6 +10,16 @@ namespace Esijafari2012\ParsianPay;
 class ParsianErrorException extends \Exception
 {
     /**
+     * @var int
+     */
+    protected $code=-100;
+
+    /**
+     * @var string
+     */
+    protected $message = 'خطای بانک.';
+
+    /**
      * ParsianErrorException constructor.
      * @param int $code
      */
