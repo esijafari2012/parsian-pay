@@ -20,7 +20,7 @@ $CallbackUrl='http://example.ir/callback' ; // set callback url
 $pr=$pIPG->payment($OrderId,$Amount,$CallbackUrl);
 if($pr instanceof PeyResult){
     if(($pr->getStatus()==0)&&($pr->getToken()>0)){
-        $pIPG->redirect();
+        $pIPG->redirect();// redirect to parsian bank gatway for payment  
     }
 }
 ```
