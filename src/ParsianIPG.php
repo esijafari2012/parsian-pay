@@ -299,13 +299,22 @@ class ParsianIPG
             throw new ParsianErrorException( -1,$err);
         } else {
 
-            // update database
+            $status = -1;
+            if(isset($result['ReversalRequestResult']['Status'])){
+                if(!empty($result['ReversalRequestResult']['Status']))
+                    $status = $result['ReversalRequestResult']['Status'];
+            }
 
-            return  [
-                'Status' => $result['ReversalRequestResult']['Status'] ?? -123456789,
-                'Token' => $result['ReversalRequestResult']['Token'],
-                'Message' => $result['ReversalRequestResult']['Message']  ,
-            ] ;
+            if($status!= 0){
+                throw new ParsianErrorException( $status);
+            }else {
+                // update database
+                return [
+                    'Status' => $status,
+                    'Token' => $result['ReversalRequestResult']['Token'],
+                    'Message' => $result['ReversalRequestResult']['Message'],
+                ];
+            }
         }
 
     }
