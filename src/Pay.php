@@ -87,13 +87,6 @@ class Pay extends ParsianIPG
         try {
             $res=$this->sendPayRequest($req);
             $this->pr=new PeyResult( $res);
-            if(($res['Status']==0)&&($res['Token']>0)){
-                $Token = $res['Token'];
-                if(!empty($Token)){
-                    header('LOCATION: '.$this->gate_url . $Token);
-                    exit;
-                }
-            }
         } catch (ParsianErrorException $e) {
             $this->pr=new PeyResult( array(
                 'Status' => $e->getCode(),

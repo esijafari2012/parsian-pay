@@ -5,6 +5,7 @@ namespace Esijafari2012\ParsianPay;
 
 
 use Esijafari2012\ParsianPay\Entities\CallbackPay;
+use Esijafari2012\ParsianPay\Entities\ConfirmResult;
 
 /**
  * Class Callback
@@ -14,12 +15,18 @@ class Callback  extends ParsianIPG
 {
 
     /**
+     * @var ConfirmResult|null
+     */
+    private $cr;
+
+    /**
      * Callback constructor.
      * @param string $pin
      */
     public function __construct(string $pin="")
     {
         parent::__construct($pin);
+        $this->cr=null;
     }
 
 
@@ -44,7 +51,7 @@ class Callback  extends ParsianIPG
                 'Token' => $cbPay->getToken()
             ];
 
-            $result = $this->sendRequest($this->ConfirmService,'ConfirmPayment',$parameters);
+            $result = $this->sendRequest($this->confirm_url,'ConfirmPayment',$parameters);
 
             // update database
 
@@ -71,7 +78,7 @@ class Callback  extends ParsianIPG
 
 
     /**
-     * @return array
+     * @return ConfirmResult|null
      */
     public   function confirm()
     {
@@ -85,27 +92,29 @@ class Callback  extends ParsianIPG
         $cbPay->setRRN($RRN);
         $cbPay->setToken($token);
 
+        $this->cr=null;
 
         try {
             $res=$this->confirmRequest($cbPay);
-            return  $res;
+            $this->cr=new  ConfirmResult($res);
         } catch (ParsianErrorException $e) {
-            return [
+            $this->cr= new  ConfirmResult([
                 'Status' => $cbPay->getStatus(),
                 'Token' => $cbPay->getToken(),
                 'Message' => self::codeToMessage($cbPay->getStatus()),
                 'RRN' => $cbPay->getRRN(),
                 'CardNumberMasked' => ''
-            ] ;
+            ] );
 
         } catch (\Exception $e) {
-            return [
+            $this->cr= new  ConfirmResult([
                 'Status' => $cbPay->getStatus(),
                 'Token' => $cbPay->getToken(),
                 'Message' => self::codeToMessage(-1,$e->getMessage()),
                 'RRN' => $cbPay->getRRN(),
                 'CardNumberMasked' => ''
-            ] ;
+            ]) ;
         }
+        return  $this->cr;
     }
 }

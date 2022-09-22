@@ -28,15 +28,16 @@ if($pr instanceof PeyResult){
 # Example For Callback
 ``` bash
 use Esijafari2012\ParsianPay\Callback;
+use Esijafari2012\ParsianPay\Entities\ConfirmResult;
   
 $pIPG=new Callback('scsdsdfbdsthsgfnfgndg');//set parsian pin
-$getCallback = $pIPG->confirm();
- 
-if($getCallback['Status'] == 0){
-    die(' Payment OK ');
+$cr = $pIPG->confirm();
+if($cr instanceof ConfirmResult){
+    if($cr->getStatus() == 0){
+        die(' Payment OK ');
+    }
 }
-
-echo $getCallback['Message'];
+echo $cr->getMessage();
 ```
 
 
