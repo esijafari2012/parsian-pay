@@ -4,6 +4,7 @@
 namespace Esijafari2012\ParsianPay;
 
 
+use Esijafari2012\ParsianPay\Entities\PeyResult;
 use Esijafari2012\ParsianPay\Entities\PinPayment;
 
 
@@ -39,7 +40,7 @@ class Pay extends ParsianIPG
             'AdditionalData'=> $req->getAdditionalData()
         ];
 
-        $result = $this->sendRequest($this->SaleServiceAddress,'SalePayment',$parameters);
+        $result = $this->sendRequest($this->sale_url,'SalePayment',$parameters);
 
         $Token = $result['SalePaymentRequestResult']['Token'];
         $Status = $result['SalePaymentRequestResult']['Status'];
@@ -64,7 +65,7 @@ class Pay extends ParsianIPG
      * @param int $amount
      * @param string $callbackUrl
      * @param string $additionalData
-     * @return array
+     * @return PeyResult
      */
     public function payment(int $orderId,int $amount,string $callbackUrl,string $additionalData) {
         $req = new PinPayment();
@@ -74,8 +75,11 @@ class Pay extends ParsianIPG
         $req->setCallbackUrl($callbackUrl);
         $req->setAdditionalData($additionalData);
 
+        $pres=null;
+
         try {
             $res=$this->sendPayRequest($req);
+            $pres=new PeyResult( $res);
             if(($res['Status']==0)&&($res['Token']>0)){
                 $Token = $res['Token'];
                 if(!empty($Token)){
@@ -83,20 +87,21 @@ class Pay extends ParsianIPG
                     exit;
                 }
             }
-            return $res;
         } catch (ParsianErrorException $e) {
-            return array(
+            $pres=new PeyResult( array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
-            );
+            ));
         } catch (\Exception $e) {
-            return array(
+            $pres=new PeyResult(array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
-            );
+            ));
         }
+
+        return $pres;
     }
 
 }
