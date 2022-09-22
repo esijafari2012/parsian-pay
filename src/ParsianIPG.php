@@ -148,35 +148,65 @@ class ParsianIPG
     }
 
 
+    /**
+     * call after bank callback for verify
+     * @param $RRN -> reference number
+     * @param $Token
+     * @param $Status
+     * @return string
+     */
+    public   function callback($RRN, $Token, $Status)
+    {
+        if ($RRN > 0 and $Status == 0) {
 
+            $client = new nusoap_client(self::$ConfirmService, 'wsdl');
+            $client->soap_defencoding = self::$Encoding;
+            $client->decode_utf8 = FALSE;
+            $err = $client->getError();
+            if ($err) {
+                return self::response(-1, $err, []);
+            }
 
-    public function verify($transactionId, $referenceId) {
-        $req = new PaymentEnquiry();
+            $parameters = [
+                'LoginAccount' =>  $this->pin,
+                'Token' => $Token
+            ];
 
+            $result = $client->call('ConfirmPayment', ['requestData' => $parameters]);
+            if ($client->fault) {
+                $err = $client->getError();
+                return self::response(-1, $err, []);
+            } else {
 
-        $req->pin           = $this->PIN;
-        $req->authority     = $referenceId;
-        $req->status        = 1;
-        $req->invoiceNumber = 0;
+                // update database
 
-        try {
-            $result = $this->service->PaymentEnquiry($req);
-        } catch (Exception $e) {
-            $result         = new PinPaymentEnquiryResponse();
-            $result->status = -1;
+                return self::response($Status, self::errors($Status), [
+                    'Status' => $result['ConfirmPaymentResult']['Status'] ?? -123456789,
+                    'Token' => $result['ConfirmPaymentResult']['Token'],
+                    'Message' => $result['ConfirmPaymentResult']['Message'] ?? self::errors($Status),
+                    'RRN' => $result['ConfirmPaymentResult']['RRN'],
+                    'CardNumberMasked' => $result['ConfirmPaymentResult']['CardNumberMasked']
+                ]);
+            }
+        } else {
+
+            // update database
+
+            return self::response($Status, self::errors($Status), [
+                'Status' => $Status,
+                'Token' => $Token,
+                'Message' => self::errors($Status),
+                'RRN' => $RRN,
+                'CardNumberMasked' => ''
+            ]);
         }
-        $this->errorCode = $result->status;
-
-        $status = $result->status === 0 && $result->invoiceNumber != -1;
-
-        $res = new VerificationResponse();
-        $res->setSuccessful($status);
-        $res->setStatus($result->status);
-        $res->setInvoiceNumber($result->invoiceNumber);
-
-        return $res;
 
     }
+
+
+
+
+
 
 
     /**

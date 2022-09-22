@@ -29,4 +29,14 @@ $TspToken = $_REQUEST['TspToken'] ?? '';
 $HashCardNumber = $_REQUEST['HashCardNumber'] ?? '';
 $Amount = $_REQUEST['Amount'] ?? 0;
 
+$pIPG=new ParsianIPG('scsdsdfbdsthsgfnfgndg');//set parsian pin
+$getCallback = $pIPG->callback($RRN, $Token, $Status);
+$Code    = $getCallback->responseCode ?? -1;
+$Message = $getCallback->responseMessage ?? 'Error';
+
+if($Code == 0){
+    die(' Payment OK ');
+}
+
+echo $Message;
 ```
