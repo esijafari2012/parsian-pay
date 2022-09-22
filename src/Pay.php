@@ -82,24 +82,30 @@ class Pay extends ParsianIPG
         $req->setCallbackUrl($callbackUrl);
         $req->setAdditionalData($additionalData);
 
+        $this->plog->writeInfo($this->getRequestMessage($req));
+
         $this->pr=null;
 
         try {
             $res=$this->sendPayRequest($req);
             $this->pr=new PeyResult( $res);
+            $this->plog->writeInfo($this->getRequestMessage($this->pr));
         } catch (ParsianErrorException $e) {
             $this->pr=new PeyResult( array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
             ));
+            $this->plog->writeError($this->getRequestMessage($this->pr));
         } catch (\Exception $e) {
             $this->pr=new PeyResult(array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
             ));
+            $this->plog->writeError($this->getRequestMessage($this->pr));
         }
+
 
         return  $this->pr;
     }

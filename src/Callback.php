@@ -92,11 +92,14 @@ class Callback  extends ParsianIPG
         $cbPay->setRRN($RRN);
         $cbPay->setToken($token);
 
+        $this->plog->writeInfo($this->getRequestMessage($cbPay));
+
         $this->cr=null;
 
         try {
             $res=$this->confirmRequest($cbPay);
             $this->cr=new  ConfirmResult($res);
+            $this->plog->writeInfo($this->getRequestMessage($this->cr));
         } catch (ParsianErrorException $e) {
             $this->cr= new  ConfirmResult([
                 'Status' => $cbPay->getStatus(),
@@ -105,7 +108,7 @@ class Callback  extends ParsianIPG
                 'RRN' => $cbPay->getRRN(),
                 'CardNumberMasked' => ''
             ] );
-
+            $this->plog->writeError($this->getRequestMessage($this->cr));
         } catch (\Exception $e) {
             $this->cr= new  ConfirmResult([
                 'Status' => $cbPay->getStatus(),
@@ -114,6 +117,7 @@ class Callback  extends ParsianIPG
                 'RRN' => $cbPay->getRRN(),
                 'CardNumberMasked' => ''
             ]) ;
+            $this->plog->writeError($this->getRequestMessage($this->cr));
         }
         return  $this->cr;
     }

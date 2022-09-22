@@ -30,10 +30,11 @@ class PayLogger
         $this->log->pushHandler(new StreamHandler('src/logs/parsianPay.log', Level::Warning));
     }
 
+
     /**
      * @param string $message
      */
-    public function writeWarning(string $message){
+    public function writeWarning(string $message){ 
         $this->log->warning($message);
     }
 
