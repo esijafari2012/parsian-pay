@@ -11,12 +11,18 @@ $ composer require esijafari2012/parsianPay
 
 ``` bash
 use Esijafari2012\ParsianPay\Pay;
+use Esijafari2012\ParsianPay\Entities\PeyResult;
 
 $pIPG=new Pay('scsdsdfbdsthsgfnfgndg');//set parsian pin
 $OrderId = time() . rand(000,999); // factor number
 $Amount  = 1000; // amount to pay
 $CallbackUrl='http://example.ir/callback' ; // set callback url
-$pIPG->payment($OrderId,$Amount,$CallbackUrl);
+$pr=$pIPG->payment($OrderId,$Amount,$CallbackUrl);
+if($pr instanceof PeyResult){
+    if(($pr->getStatus()==0)&&($pr->getToken()>0)){
+        $pIPG->redirect();
+    }
+}
 ```
 
 # Example For Callback

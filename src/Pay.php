@@ -16,12 +16,19 @@ class Pay extends ParsianIPG
 {
 
     /**
+     * @var PeyResult|null
+     */
+    private $pr;
+
+
+    /**
      * Pay constructor.
      * @param string $pin
      */
     public function __construct(string $pin="")
     {
         parent::__construct($pin);
+        $this->pr=null;
     }
 
 
@@ -65,7 +72,7 @@ class Pay extends ParsianIPG
      * @param int $amount
      * @param string $callbackUrl
      * @param string $additionalData
-     * @return PeyResult
+     * @return PeyResult|null
      */
     public function payment(int $orderId,int $amount,string $callbackUrl,string $additionalData) {
         $req = new PinPayment();
@@ -75,11 +82,11 @@ class Pay extends ParsianIPG
         $req->setCallbackUrl($callbackUrl);
         $req->setAdditionalData($additionalData);
 
-        $pres=null;
+        $this->pr=null;
 
         try {
             $res=$this->sendPayRequest($req);
-            $pres=new PeyResult( $res);
+            $this->pr=new PeyResult( $res);
             if(($res['Status']==0)&&($res['Token']>0)){
                 $Token = $res['Token'];
                 if(!empty($Token)){
@@ -88,20 +95,36 @@ class Pay extends ParsianIPG
                 }
             }
         } catch (ParsianErrorException $e) {
-            $pres=new PeyResult( array(
+            $this->pr=new PeyResult( array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
             ));
         } catch (\Exception $e) {
-            $pres=new PeyResult(array(
+            $this->pr=new PeyResult(array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
             ));
         }
 
-        return $pres;
+        return  $this->pr;
     }
 
+
+    /**
+     * @return false
+     */
+    public function redirect() {
+        if( $this->pr instanceof PeyResult){
+            if(($this->pr->getStatus()==0)&&( $this->pr->getToken()>0)){
+                $Token =  $this->pr->getToken();
+                if(!empty($Token)){
+                    header('LOCATION: '.$this->gate_url . $Token);
+                    exit;
+                }
+            }
+        }
+        return false;
+    }
 }
