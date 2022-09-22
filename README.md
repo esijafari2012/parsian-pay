@@ -50,7 +50,7 @@ $pIPG=new Reverse('scsdsdfbdsthsgfnfgndg');//set parsian pin
 $pr = $pIPG->reverse(12545485);//reverse token payment
  
 if($pr instanceof PeyResult){
-    if(($pr->getStatus()==0){
+    if($pr->getStatus()==0){
         die(' Reverse Payment OK ');
     }
 }
