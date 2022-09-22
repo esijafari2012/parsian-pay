@@ -10,20 +10,21 @@ $ composer require esijafari2012/parsianPay
 # Example For Pay
 
 ``` bash
-use Esijafari2012\ParsianPay\ParsianIPG;
+use Esijafari2012\ParsianPay\Pay;
 
-$pIPG=new ParsianIPG('scsdsdfbdsthsgfnfgndg');//set parsian pin
+$pIPG=new Pay('scsdsdfbdsthsgfnfgndg');//set parsian pin
 $OrderId = time() . rand(000,999); // factor number
 $Amount  = 1000; // amount to pay
 $CallbackUrl='http://example.ir/callback' ; // set callback url
-$pIPG->startPayment($OrderId,$Amount,$CallbackUrl);
+$pIPG->payment($OrderId,$Amount,$CallbackUrl);
 ```
 
 # Example For Callback
 ``` bash
+use Esijafari2012\ParsianPay\Callback;
   
-$pIPG=new ParsianIPG('scsdsdfbdsthsgfnfgndg');//set parsian pin
-$getCallback = $pIPG->callback();
+$pIPG=new Callback('scsdsdfbdsthsgfnfgndg');//set parsian pin
+$getCallback = $pIPG->confirm();
  
 if($getCallback['Status'] == 0){
     die(' Payment OK ');
@@ -35,8 +36,9 @@ echo $getCallback['Message'];
 
 # Example For reverse
 ``` bash
-  
-$pIPG=new ParsianIPG('scsdsdfbdsthsgfnfgndg');//set parsian pin
+use Esijafari2012\ParsianPay\Reverse;
+
+$pIPG=new Reverse('scsdsdfbdsthsgfnfgndg');//set parsian pin
 $getCallback = $pIPG->reverse(12545485);//reverse token payment
  
 if($getCallback['Status'] == 0){
