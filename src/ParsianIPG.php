@@ -82,6 +82,7 @@ class ParsianIPG
         $client->decode_utf8 = FALSE;
         $err = $client->getError();
         if ($err) {
+            throw new ParsianErrorException($errorMessage, $status);
             return self::response(-1, $err, []);
         }
 

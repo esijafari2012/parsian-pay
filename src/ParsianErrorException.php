@@ -4,14 +4,13 @@
 namespace Esijafari2012\ParsianPay;
 
 /**
- * Class Exception
+ * Class ParsianErrorException
  * @package Esijafari2012\ParsianPay
  */
-class Exception extends \Exception
+class ParsianErrorException extends \Exception
 {
-
     /**
-     * Exception constructor.
+     * ParsianErrorException constructor.
      * @param int $code
      */
     public function __construct(int $code = -32768)
