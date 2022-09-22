@@ -107,6 +107,7 @@ class ParsianIPG
             $Message = $result['SalePaymentRequestResult']['Message'];
 
             if(($Status==0)&&($Token>0)){
+                // update database
                 return array(
                     'Status' => $Status,
                     'Token' => $Token,
