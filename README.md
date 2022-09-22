@@ -10,7 +10,7 @@ $ composer require esijafari2012/parsianPay
 # Example For Pay
 
 ``` bash
-use Esijafari2012\ParsianPay\ParsianIPG
+use Esijafari2012\ParsianPay\ParsianIPG;
 
 $pIPG=new ParsianIPG('scsdsdfbdsthsgfnfgndg');//set parsian pin
 $OrderId = time() . rand(000,999); // factor number
