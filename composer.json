@@ -10,6 +10,7 @@
   "type": "library",
   "license": "MIT",
   "minimum-stability": "stable",
+  "version": "1.0.1",
   "authors": [
     {
       "name": "esmaeil jafari",
@@ -22,8 +23,8 @@
     }
   },
   "require": {
-    "php": "^7.1",
-    "ext-soap": "*"
+    "php": ">=7.0",
+    "econea/nusoap": "^0.9.11"
   },
   "require-dev": {
     "phpunit/phpunit": "^6.5.6"
