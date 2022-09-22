@@ -31,3 +31,17 @@ if($getCallback['Status'] == 0){
 
 echo $getCallback['Message'];
 ```
+
+
+# Example For reverse
+``` bash
+  
+$pIPG=new ParsianIPG('scsdsdfbdsthsgfnfgndg');//set parsian pin
+$getCallback = $pIPG->reverse(12545485);//reverse token payment
+ 
+if($getCallback['Status'] == 0){
+    die(' Reverse Payment OK ');
+}
+
+echo $getCallback['Message'];
+```

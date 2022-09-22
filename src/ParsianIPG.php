@@ -5,6 +5,7 @@ namespace Esijafari2012\ParsianPay;
 
 use Esijafari2012\ParsianPay\Entities\CallbackPay;
 use Esijafari2012\ParsianPay\Entities\PinPayment;
+use Esijafari2012\ParsianPay\Entities\ReverseToken;
 use nusoap_client;
 
 
@@ -38,6 +39,14 @@ class ParsianIPG
      * @var string
      */
     private static $gate_url = 'https://pec.shaparak.ir/NewIPG/?Token=';
+
+    /**
+     * Url of parsian gateway web service
+     *
+     * @var string $reverse_url Url for reverse transaction
+     *
+     */
+    private static $reverse_url = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx?WSDL';
 
 
     /**
@@ -260,4 +269,74 @@ class ParsianIPG
     }
 
 
+    /**
+     * @param ReverseToken $rvToken
+     * @return array
+     * @throws ParsianErrorException
+     */
+    protected function reverseRequest( ReverseToken $rvToken){
+
+        if ($rvToken->getToken() <= 0) {
+            throw new ParsianErrorException( -2);
+        }
+
+        $client = new nusoap_client(self::$reverse_url, 'wsdl');
+        $client->soap_defencoding = self::$Encoding;
+        $client->decode_utf8 = FALSE;
+        $err = $client->getError();
+        if ($err) {
+            throw new ParsianErrorException( -1,$err);
+        }
+
+        $parameters = [
+            'LoginAccount' =>  $rvToken->getPin(),
+            'Token' => $rvToken->getToken()
+        ];
+
+        $result = $client->call('ReversalRequest', ['requestData' => $parameters]);
+        if ($client->fault) {
+            $err = $client->getError();
+            throw new ParsianErrorException( -1,$err);
+        } else {
+
+            // update database
+
+            return  [
+                'Status' => $result['ReversalRequestResult']['Status'] ?? -123456789,
+                'Token' => $result['ReversalRequestResult']['Token'],
+                'Message' => $result['ReversalRequestResult']['Message']  ,
+            ] ;
+        }
+
+    }
+
+
+    /**
+     * @param int $token
+     * @return array
+     */
+    public   function  reverse(int $token)
+    {
+        $rvToken=new ReverseToken();
+        $rvToken->setPin($this->pin);
+        $rvToken->setToken($token);
+
+        try {
+            $res=$this->reverseRequest($rvToken);
+            return  $res;
+        } catch (ParsianErrorException $e) {
+            return [
+                'Status' => $e->getCode(),
+                'Token' => $rvToken->getToken(),
+                'Message' => $e->getMessage(),
+            ] ;
+
+        } catch (\Exception $e) {
+            return [
+                'Status' => -1,
+                'Token' => $rvToken->getToken(),
+                'Message' => self::codeToMessage(-1,$e->getMessage()),
+            ] ;
+        }
+    }
 }
