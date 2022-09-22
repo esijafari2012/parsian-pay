@@ -30,6 +30,11 @@ class PinPayment
     public $callbackUrl;
 
     /**
+     * @var string|null
+     */
+    public $additionalData;
+
+    /**
      * @var mixed
      */
     public $authority; // long
@@ -133,7 +138,25 @@ class PinPayment
     public function setStatus($status)
     {
         $this->status = $status;
-    } // unsignedByte
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAdditionalData(): string
+    {
+        return $this->additionalData;
+    }
+
+    /**
+     * @param string|null $additionalData
+     */
+    public function setAdditionalData(string $additionalData)
+    {
+        $this->additionalData = $additionalData;
+    }
+
+
 
 
 }
