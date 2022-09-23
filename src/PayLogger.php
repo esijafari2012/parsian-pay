@@ -3,7 +3,6 @@
 
 namespace Esijafari2012\ParsianPay;
 
-use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -18,7 +17,7 @@ class PayLogger
     /**
      * @var Logger
      */
-     private   $log;
+    private   $log;
 
 
     /**
@@ -27,14 +26,14 @@ class PayLogger
     public function __construct()
     {
         $this->log = new Logger('parsianPay');
-        $this->log->pushHandler(new StreamHandler('src/logs/parsianPay.log', Level::Warning));
+        $this->log->pushHandler(new StreamHandler(__DIR__.'/logs/parsianPay.log', Logger::DEBUG));
     }
 
 
     /**
      * @param string $message
      */
-    public function writeWarning(string $message){ 
+    public function writeWarning(string $message){
         $this->log->warning($message);
     }
 
