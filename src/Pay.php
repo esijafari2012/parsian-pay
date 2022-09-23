@@ -41,13 +41,13 @@ class Pay extends ParsianIPG
 
         $parameters = [
             'LoginAccount' => $req->getPin(),
-            'Amount' =>  $req->getPin(),
+            'Amount' => $req->getAmount(),
             'OrderId' => $req->getOrderId(),
             'CallBackUrl' => $req->getCallbackUrl(),
             'AdditionalData'=> $req->getAdditionalData()
         ];
 
-        $result = $this->sendRequest($this->sale_url,'SalePayment',$parameters);
+        $result = $this->sendRequest($this->sale_url,'SalePaymentRequest',$parameters);
 
         $Token = $result['SalePaymentRequestResult']['Token'];
         $Status = $result['SalePaymentRequestResult']['Status'];
@@ -68,13 +68,13 @@ class Pay extends ParsianIPG
 
 
     /**
-     * @param int $orderId
-     * @param int $amount
+     * @param $orderId
+     * @param $amount
      * @param string $callbackUrl
      * @param string $additionalData
      * @return PeyResult|null
      */
-    public function payment(int $orderId,int $amount,string $callbackUrl,string $additionalData) {
+    public function payment( $orderId, $amount,string $callbackUrl,string $additionalData="") {
         $req = new PinPayment();
         $req->setAmount($amount);
         $req->setOrderId($orderId);
@@ -89,27 +89,26 @@ class Pay extends ParsianIPG
         try {
             $res=$this->sendPayRequest($req);
             $this->pr=new PeyResult( $res);
-            $this->plog->writeInfo($this->getRequestMessage($this->pr));
+            $this->plog->writeInfo($this->getResultMessage($this->pr));
         } catch (ParsianErrorException $e) {
             $this->pr=new PeyResult( array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
             ));
-            $this->plog->writeError($this->getRequestMessage($this->pr));
+            $this->plog->writeError($this->getResultMessage($this->pr));
         } catch (\Exception $e) {
             $this->pr=new PeyResult(array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
             ));
-            $this->plog->writeError($this->getRequestMessage($this->pr));
+            $this->plog->writeError($this->getResultMessage($this->pr));
         }
 
 
         return  $this->pr;
     }
-
 
     /**
      * @return false
