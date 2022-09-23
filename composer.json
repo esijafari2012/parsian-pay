@@ -9,7 +9,6 @@
   ],
   "type": "library",
   "license": "MIT",
-  "minimum-stability": "stable",
   "version": "1.0.1",
   "authors": [
     {
@@ -22,6 +21,8 @@
       "Esijafari2012\\ParsianPay\\": "src/"
     }
   },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "php": ">=7.0",
     "econea/nusoap": "^0.9.11",
