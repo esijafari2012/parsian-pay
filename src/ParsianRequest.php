@@ -18,7 +18,7 @@ class ParsianRequest
      * @var string $server_url Url for initializing payment request
      *
      */
-    public   $sale_url = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL';
+    public   $sale_url = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?wsdl';
 
     /**
      * Url of parsian gateway web service
@@ -26,7 +26,7 @@ class ParsianRequest
      * @var string $confirm_url Url for confirming transaction
      *
      */
-    public   $confirm_url = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+    public   $confirm_url = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?wsdl';
 
     /**
      * Address of gate for redirect
@@ -41,7 +41,7 @@ class ParsianRequest
      * @var string $reverse_url Url for reverse transaction
      *
      */
-    public   $reverse_url = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx?WSDL';
+    public   $reverse_url = 'https://pec.shaparak.ir/NewIPGServices/Reverse/ReversalService.asmx?wsdl';
 
 
     /**
