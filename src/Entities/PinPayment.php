@@ -15,12 +15,12 @@ class PinPayment
     public $pin;
 
     /**
-     * @var int
+     * @var int|float|string
      */
     public $amount;
 
     /**
-     * @var int
+     * @var int|float|string
      */
     public $orderId;
 
@@ -51,33 +51,33 @@ class PinPayment
     }
 
     /**
-     * @return int
+     * @return float|int|string
      */
-    public function getAmount(): int
+    public function getAmount()
     {
         return $this->amount;
     }
 
     /**
-     * @param int $amount
+     * @param float|int|string $amount
      */
-    public function setAmount(int $amount)
+    public function setAmount($amount)
     {
         $this->amount = $amount;
     }
 
     /**
-     * @return int
+     * @return float|int|string
      */
-    public function getOrderId(): int
+    public function getOrderId()
     {
         return $this->orderId;
     }
 
     /**
-     * @param int $orderId
+     * @param float|int|string $orderId
      */
-    public function setOrderId(int $orderId)
+    public function setOrderId($orderId)
     {
         $this->orderId = $orderId;
     }
@@ -113,7 +113,6 @@ class PinPayment
     {
         $this->additionalData = $additionalData;
     }
-
 
 
 
