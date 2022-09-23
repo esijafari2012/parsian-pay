@@ -25,7 +25,6 @@ class ParsianIPG extends ParsianRequest
     public $plog;
 
 
-
     /**
      * ParsianIPG constructor.
      * @param string $pin
@@ -35,7 +34,6 @@ class ParsianIPG extends ParsianRequest
         parent::__construct($pin);
         $this->plog = new PayLogger();
     }
-
 
     /**
      * @param string $url
