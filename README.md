@@ -14,7 +14,7 @@ use Esijafari2012\ParsianPay\Pay;
 use Esijafari2012\ParsianPay\Entities\PeyResult;
 
 $pIPG=new Pay('scsdsdfbdsthsgfnfgndg');//set parsian pin
-$OrderId = time() . rand(000,999); // factor number
+$OrderId = (float)(time() . rand(000,999)); // factor number
 $Amount  = 1000; // amount to pay
 $CallbackUrl='http://example.ir/callback' ; // set callback url
 $pr=$pIPG->payment($OrderId,$Amount,$CallbackUrl);
