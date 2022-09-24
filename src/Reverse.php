@@ -63,8 +63,6 @@ class Reverse  extends ParsianIPG
                 'Message' => $result['ReversalRequestResult']['Message'],
             ];
         }
-
-
     }
 
 
@@ -84,21 +82,21 @@ class Reverse  extends ParsianIPG
         try {
             $res=$this->reverseRequest($rvToken);
             $this->pr=new PeyResult( $res);
-            $this->plog->writeInfo($this->getRequestMessage($this->pr));
+            $this->plog->writeInfo($this->getResultMessage($this->pr));
         } catch (ParsianErrorException $e) {
             $this->pr=new PeyResult( [
                 'Status' => $e->getCode(),
                 'Token' => $rvToken->getToken(),
                 'Message' => $e->getMessage(),
             ]) ;
-            $this->plog->writeError($this->getRequestMessage($this->pr));
+            $this->plog->writeError($this->getResultMessage($this->pr));
         } catch (\Exception $e) {
             $this->pr=new PeyResult( [
                 'Status' => -1,
                 'Token' => $rvToken->getToken(),
                 'Message' => self::codeToMessage(-1,$e->getMessage()),
             ]) ;
-            $this->plog->writeError($this->getRequestMessage($this->pr));
+            $this->plog->writeError($this->getResultMessage($this->pr));
         }
 
         return  $this->pr;

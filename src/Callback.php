@@ -29,7 +29,6 @@ class Callback  extends ParsianIPG
         $this->cr=null;
     }
 
-
     /**
      * @param CallbackPay $cbPay
      * @return array
@@ -83,42 +82,55 @@ class Callback  extends ParsianIPG
     public   function confirm()
     {
         $token = $_POST["Token"] ?? null;
-        $status = $_POST["status"] ?? -1;
+        $status = $_POST["status"] ?? -4;
         $RRN = $_POST["RRN"] ?? null;
 
-        $cbPay=new CallbackPay();
-        $cbPay->setPin($this->pin);
-        $cbPay->setStatus($status);
-        $cbPay->setRRN($RRN);
-        $cbPay->setToken($token);
 
-        $this->plog->writeInfo($this->getRequestMessage($cbPay));
 
-        $this->cr=null;
-
-        try {
-            $res=$this->confirmRequest($cbPay);
-            $this->cr=new  ConfirmResult($res);
-            $this->plog->writeInfo($this->getRequestMessage($this->cr));
-        } catch (ParsianErrorException $e) {
-            $this->cr= new  ConfirmResult([
-                'Status' => $cbPay->getStatus(),
-                'Token' => $cbPay->getToken(),
-                'Message' => self::codeToMessage($cbPay->getStatus()),
-                'RRN' => $cbPay->getRRN(),
+        if($status==-4||$token==null||$RRN==null){
+            $this->cr = new  ConfirmResult([
+                'Status' => $status,
+                'Token' => $token,
+                'Message' => self::codeToMessage($status),
+                'RRN' => $RRN,
                 'CardNumberMasked' => ''
-            ] );
-            $this->plog->writeError($this->getRequestMessage($this->cr));
-        } catch (\Exception $e) {
-            $this->cr= new  ConfirmResult([
-                'Status' => $cbPay->getStatus(),
-                'Token' => $cbPay->getToken(),
-                'Message' => self::codeToMessage(-1,$e->getMessage()),
-                'RRN' => $cbPay->getRRN(),
-                'CardNumberMasked' => ''
-            ]) ;
-            $this->plog->writeError($this->getRequestMessage($this->cr));
+            ]);
+            $this->plog->writeError($this->getResultMessage($this->cr));
+        }else {
+            $cbPay = new CallbackPay();
+            $cbPay->setPin($this->pin);
+            $cbPay->setStatus($status);
+            $cbPay->setRRN($RRN);
+            $cbPay->setToken($token);
+
+            $this->plog->writeInfo($this->getRequestMessage($cbPay));
+
+            $this->cr = null;
+
+            try {
+                $res = $this->confirmRequest($cbPay);
+                $this->cr = new  ConfirmResult($res);
+                $this->plog->writeInfo($this->getResultMessage($this->cr));
+            } catch (ParsianErrorException $e) {
+                $this->cr = new  ConfirmResult([
+                    'Status' => $cbPay->getStatus(),
+                    'Token' => $cbPay->getToken(),
+                    'Message' => self::codeToMessage($cbPay->getStatus()),
+                    'RRN' => $cbPay->getRRN(),
+                    'CardNumberMasked' => ''
+                ]);
+                $this->plog->writeError($this->getResultMessage($this->cr));
+            } catch (\Exception $e) {
+                $this->cr = new  ConfirmResult([
+                    'Status' => $cbPay->getStatus(),
+                    'Token' => $cbPay->getToken(),
+                    'Message' => self::codeToMessage(-1, $e->getMessage()),
+                    'RRN' => $cbPay->getRRN(),
+                    'CardNumberMasked' => ''
+                ]);
+                $this->plog->writeError($this->getResultMessage($this->cr));
+            }
         }
-        return  $this->cr;
+        return $this->cr;
     }
 }
