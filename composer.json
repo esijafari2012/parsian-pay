@@ -8,8 +8,8 @@
     "parsian gateway"
   ],
   "type": "library",
-  "license": "MIT",
   "version": "1.0.2",
+  "license": "MIT",
   "authors": [
     {
       "name": "esmaeil jafari",
