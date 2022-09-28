@@ -49,11 +49,10 @@ class Reverse  extends ParsianIPG
 
         $status = -1;
         if(isset($result['ReversalRequestResult']['Status'])){
-            if(!empty($result['ReversalRequestResult']['Status']))
-                $status = $result['ReversalRequestResult']['Status'];
+            $status = $result['ReversalRequestResult']['Status'];
         }
 
-        if($status!= 0){
+        if($status!= '0'){
             throw new ParsianErrorException( $status);
         }else {
             // update database
