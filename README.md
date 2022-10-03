@@ -11,7 +11,7 @@ $ composer require esijafari2012/parsian-pay
 
 ``` bash
 use Esijafari2012\ParsianPay\Pay;
-use Esijafari2012\ParsianPay\Entities\PeyResult;
+use Esijafari2012\ParsianPay\Entities\PayResult;
 
 $pay=new Pay('scsdsdfbdsthsgfnfgndg');//set parsian pin
 $OrderId = (float)(time() . rand(000,999)); // factor number

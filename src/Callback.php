@@ -4,7 +4,7 @@
 namespace Esijafari2012\ParsianPay;
 
 
-use Esijafari2012\ParsianPay\Entities\CallbackPay;
+use Esijafari2012\ParsianPay\Entities\ConfirmPaymentRequest;
 use Esijafari2012\ParsianPay\Entities\ConfirmResult;
 
 /**
@@ -30,49 +30,27 @@ class Callback  extends ParsianIPG
     }
 
     /**
-     * @param CallbackPay $callbackPay
+     * @param ConfirmPaymentRequest $confirmPaymentRequest
      * @return array
      * @throws ParsianErrorException
      */
-    protected function confirmRequest( CallbackPay $callbackPay){
+    protected function confirmRequest( ConfirmPaymentRequest $confirmPaymentRequest){
 
-        if (empty($callbackPay->getToken()) or !is_numeric($callbackPay->getStatus())) {
-            throw new ParsianErrorException( -3);
-        }
-        if ($callbackPay->getStatus() != 0 || !$callbackPay->getRRN()) {
-            throw new ParsianErrorException($callbackPay->getStatus());
-        }
+        $parameters = [
+            'LoginAccount' =>  $confirmPaymentRequest->getPin(),
+            'Token' => $confirmPaymentRequest->getToken()
+        ];
 
-        if ($callbackPay->getRRN() > 0 and $callbackPay->getStatus() == 0) {
+        $result = $this->sendRequest($this->confirm_url,'ConfirmPayment',$parameters);
 
-            $parameters = [
-                'LoginAccount' =>  $callbackPay->getPin(),
-                'Token' => $callbackPay->getToken()
-            ];
 
-            $result = $this->sendRequest($this->confirm_url,'ConfirmPayment',$parameters);
-
-            // update database
-
-            return  [
-                'Status' => $result['ConfirmPaymentResult']['Status'] ?? -123456789,
-                'Token' => $result['ConfirmPaymentResult']['Token'],
-                'Message' => $result['ConfirmPaymentResult']['Message']  ,
-                'RRN' => $result['ConfirmPaymentResult']['RRN'],
-                'CardNumberMasked' => $result['ConfirmPaymentResult']['CardNumberMasked']
-            ] ;
-
-        } else {
-
-            // update database
-            return [
-                'Status' => $callbackPay->getStatus(),
-                'Token' => $callbackPay->getToken(),
-                'Message' => self::codeToMessage($callbackPay->getStatus()),
-                'RRN' => $callbackPay->getRRN(),
-                'CardNumberMasked' => ''
-            ] ;
-        }
+        return  [
+            'Status' => $result['ConfirmPaymentResult']['Status'] ?? -123456789,
+            'Token' => $result['ConfirmPaymentResult']['Token'],
+            'Message' => $result['ConfirmPaymentResult']['Message']  ,
+            'RRN' => $result['ConfirmPaymentResult']['RRN'],
+            'CardNumberMasked' => $result['ConfirmPaymentResult']['CardNumberMasked']
+        ] ;
     }
 
 
@@ -81,12 +59,66 @@ class Callback  extends ParsianIPG
      */
     public   function confirm()
     {
-        $token = $_POST["Token"] ?? null;
-        $status = $_POST["status"] ?? -4;
-        $RRN = $_POST["RRN"] ?? null;
+        $b=false;
+        $status = null;
+        $token = null;
+        $RRN = null;
 
+        if(isset($_POST["status"]))  $status = $_POST["status"]  ;
+        if(isset($_POST["Token"]))  $token = $_POST["Token"]  ;
+        if(isset($_POST["RRN"]))  $RRN = $_POST["RRN"]  ;
 
-        if($status==-4||$token==null||$RRN==null){
+        if(isset($_POST["status"])){
+            $status =  $_POST["status"];
+            if($status==0){
+                if(isset($_POST["RRN"])){
+                    $RRN = $_POST["RRN"]  ;
+                    if($RRN>0){
+                        if(isset($_POST["Token"])){
+                            $token = $_POST["Token"]  ;
+                            if($token>0){
+                                $b=true;
+                                $confirmPaymentRequest = new ConfirmPaymentRequest();
+                                $confirmPaymentRequest->setPin($this->pin);
+                                $confirmPaymentRequest->setStatus($status);
+                                $confirmPaymentRequest->setRRN($RRN);
+                                $confirmPaymentRequest->setToken($token);
+
+                                $this->payLogger->writeInfo($this->getRequestMessage($confirmPaymentRequest));
+
+                                $this->confirmResult = null;
+
+                                try {
+                                    $result = $this->confirmRequest($confirmPaymentRequest);
+                                    $this->confirmResult = new  ConfirmResult($result);
+                                    $this->payLogger->writeInfo($this->getResultMessage($this->confirmResult));
+                                } catch (ParsianErrorException $e) {
+                                    $this->confirmResult = new  ConfirmResult([
+                                        'Status' => $confirmPaymentRequest->getStatus(),
+                                        'Token' => $confirmPaymentRequest->getToken(),
+                                        'Message' => self::codeToMessage($confirmPaymentRequest->getStatus()),
+                                        'RRN' => $confirmPaymentRequest->getRRN(),
+                                        'CardNumberMasked' => ''
+                                    ]);
+                                    $this->payLogger->writeError($this->getResultMessage($this->confirmResult));
+                                } catch (\Exception $e) {
+                                    $this->confirmResult = new  ConfirmResult([
+                                        'Status' => $confirmPaymentRequest->getStatus(),
+                                        'Token' => $confirmPaymentRequest->getToken(),
+                                        'Message' =>  $e->getMessage(),
+                                        'RRN' => $confirmPaymentRequest->getRRN(),
+                                        'CardNumberMasked' => ''
+                                    ]);
+                                    $this->payLogger->writeError($this->getResultMessage($this->confirmResult));
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(!$b){
             $this->confirmResult = new  ConfirmResult([
                 'Status' => $status,
                 'Token' => $token,
@@ -95,41 +127,9 @@ class Callback  extends ParsianIPG
                 'CardNumberMasked' => ''
             ]);
             $this->payLogger->writeError($this->getResultMessage($this->confirmResult));
-        }else {
-            $callbackPay = new CallbackPay();
-            $callbackPay->setPin($this->pin);
-            $callbackPay->setStatus($status);
-            $callbackPay->setRRN($RRN);
-            $callbackPay->setToken($token);
 
-            $this->payLogger->writeInfo($this->getRequestMessage($callbackPay));
-
-            $this->confirmResult = null;
-
-            try {
-                $result = $this->confirmRequest($callbackPay);
-                $this->confirmResult = new  ConfirmResult($result);
-                $this->payLogger->writeInfo($this->getResultMessage($this->confirmResult));
-            } catch (ParsianErrorException $e) {
-                $this->confirmResult = new  ConfirmResult([
-                    'Status' => $callbackPay->getStatus(),
-                    'Token' => $callbackPay->getToken(),
-                    'Message' => self::codeToMessage($callbackPay->getStatus()),
-                    'RRN' => $callbackPay->getRRN(),
-                    'CardNumberMasked' => ''
-                ]);
-                $this->payLogger->writeError($this->getResultMessage($this->confirmResult));
-            } catch (\Exception $e) {
-                $this->confirmResult = new  ConfirmResult([
-                    'Status' => $callbackPay->getStatus(),
-                    'Token' => $callbackPay->getToken(),
-                    'Message' => self::codeToMessage(-1, $e->getMessage()),
-                    'RRN' => $callbackPay->getRRN(),
-                    'CardNumberMasked' => ''
-                ]);
-                $this->payLogger->writeError($this->getResultMessage($this->confirmResult));
-            }
         }
+
         return $this->confirmResult;
     }
 }
