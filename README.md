@@ -30,14 +30,15 @@ if($payResult instanceof PayResult){
 use Esijafari2012\ParsianPay\Callback;
 use Esijafari2012\ParsianPay\Entities\ConfirmResult;
   
-$pIPG=new Callback('scsdsdfbdsthsgfnfgndg');//set parsian pin
-$cr = $pIPG->confirm();
-if($cr instanceof ConfirmResult){
-    if($cr->getStatus() == 0){
+$callback=new Callback('scsdsdfbdsthsgfnfgndg');//set parsian pin
+$confirmResult = $callback->confirm();
+if($confirmResult$confirmResult instanceof ConfirmResult){
+    if($confirmResult->getStatus() == 0){
         die(' Payment OK ');
     }
+    echo $confirmResult->getMessage();
 }
-echo $cr->getMessage();
+
 ```
 
 

@@ -55,7 +55,7 @@ class Callback  extends ParsianIPG
 
 
     /**
-     * @return ConfirmResult|null
+     * @return ConfirmResult|false|null
      */
     public   function confirm()
     {
@@ -118,7 +118,9 @@ class Callback  extends ParsianIPG
                 }
             }
         }
-        if(!$b){
+        if($b) {
+            return $this->confirmResult;
+        }else{
             $this->confirmResult = new  ConfirmResult([
                 'Status' => $status,
                 'Token' => $token,
@@ -127,9 +129,9 @@ class Callback  extends ParsianIPG
                 'CardNumberMasked' => ''
             ]);
             $this->payLogger->writeError($this->getResultMessage($this->confirmResult));
-
+            return  false;
         }
 
-        return $this->confirmResult;
+
     }
 }
