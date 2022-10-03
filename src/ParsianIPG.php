@@ -4,7 +4,7 @@
 namespace Esijafari2012\ParsianPay;
 
 
-use Esijafari2012\ParsianPay\Entities\CallbackPay;
+use Esijafari2012\ParsianPay\Entities\ConfirmPaymentRequest;
 use Esijafari2012\ParsianPay\Entities\ConfirmResult;
 use Esijafari2012\ParsianPay\Entities\PayResult;
 use Esijafari2012\ParsianPay\Entities\SalePaymentRequest;
@@ -71,7 +71,7 @@ class ParsianIPG extends ParsianRequest
             $str=$str." >>  Amount :: ".$request->getAmount();
             $str=$str." >>  OrderId :: ".$request->getOrderId();
             $str=$str." >>  CallbackUrl :: ".$request->getCallbackUrl();
-        }elseif ($request instanceof CallbackPay){
+        }elseif ($request instanceof ConfirmPaymentRequest){
             $str=$str." >>  ConfirmPayment Request >> " ;
             $str=$str." >>  Token :: ".$request->getToken();
             $str=$str." >>  Status :: ".$request->getStatus();
