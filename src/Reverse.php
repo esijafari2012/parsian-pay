@@ -38,7 +38,8 @@ class Reverse  extends ParsianIPG
     protected function reverseRequest( ReverseToken $rvToken){
 
         if ($rvToken->getToken() <= 0) {
-            throw new ParsianErrorException( -2);
+            //throw new ParsianErrorException( -2);
+            return false;
         }
 
         $parameters = [
@@ -47,7 +48,7 @@ class Reverse  extends ParsianIPG
         ];
         $result = $this->sendRequest($this->reverse_url,'ReversalRequest',$parameters);
 
-        $status = -1;
+        $status = null;
         if(isset($result['ReversalRequestResult']['Status'])){
             $status = $result['ReversalRequestResult']['Status'];
         }
