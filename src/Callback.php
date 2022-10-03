@@ -45,7 +45,7 @@ class Callback  extends ParsianIPG
 
 
         return  [
-            'Status' => $result['ConfirmPaymentResult']['Status'] ?? -123456789,
+            'Status' => $result['ConfirmPaymentResult']['Status']  ,
             'Token' => $result['ConfirmPaymentResult']['Token'],
             'Message' => $result['ConfirmPaymentResult']['Message']  ,
             'RRN' => $result['ConfirmPaymentResult']['RRN'],
