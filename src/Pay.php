@@ -4,7 +4,7 @@
 namespace Esijafari2012\ParsianPay;
 
 
-use Esijafari2012\ParsianPay\Entities\PeyResult;
+use Esijafari2012\ParsianPay\Entities\PayResult;
 use Esijafari2012\ParsianPay\Entities\PinPayment;
 
 
@@ -16,9 +16,9 @@ class Pay extends ParsianIPG
 {
 
     /**
-     * @var PeyResult|null
+     * @var PayResult|null
      */
-    private $pr;
+    private $payResult;
 
 
     /**
@@ -28,7 +28,7 @@ class Pay extends ParsianIPG
     public function __construct(string $pin="")
     {
         parent::__construct($pin);
-        $this->pr=null;
+        $this->payResult=null;
     }
 
 
@@ -72,7 +72,7 @@ class Pay extends ParsianIPG
      * @param $amount
      * @param string $callbackUrl
      * @param string $additionalData
-     * @return PeyResult|null
+     * @return PayResult|null
      */
     public function payment( $orderId, $amount,string $callbackUrl,string $additionalData="") {
         $req = new PinPayment();
@@ -84,39 +84,39 @@ class Pay extends ParsianIPG
 
         $this->payLogger->writeInfo($this->getRequestMessage($req));
 
-        $this->pr=null;
+        $this->payResult=null;
 
         try {
             $res=$this->sendPayRequest($req);
-            $this->pr=new PeyResult( $res);
-            $this->payLogger->writeInfo($this->getResultMessage($this->pr));
+            $this->payResult=new PayResult( $res);
+            $this->payLogger->writeInfo($this->getResultMessage($this->payResult));
         } catch (ParsianErrorException $e) {
-            $this->pr=new PeyResult( array(
+            $this->payResult=new PayResult( array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
             ));
-            $this->payLogger->writeError($this->getResultMessage($this->pr));
+            $this->payLogger->writeError($this->getResultMessage($this->payResult));
         } catch (\Exception $e) {
-            $this->pr=new PeyResult(array(
+            $this->payResult=new PayResult(array(
                 'Status' => $e->getCode(),
                 'Token' => 0,
                 'Message' => $e->getMessage()
             ));
-            $this->payLogger->writeError($this->getResultMessage($this->pr));
+            $this->payLogger->writeError($this->getResultMessage($this->payResult));
         }
 
 
-        return  $this->pr;
+        return  $this->payResult;
     }
 
     /**
      * @return false
      */
     public function redirect() {
-        if( $this->pr instanceof PeyResult){
-            if(($this->pr->getStatus()==0)&&( $this->pr->getToken()>0)){
-                $Token =  $this->pr->getToken();
+        if( $this->payResult instanceof PayResult){
+            if(($this->payResult->getStatus()==0)&&( $this->payResult->getToken()>0)){
+                $Token =  $this->payResult->getToken();
                 if(!empty($Token)){
                     header('LOCATION: '.$this->gate_url . $Token);
                     exit;

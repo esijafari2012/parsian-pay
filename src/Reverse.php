@@ -4,7 +4,7 @@
 namespace Esijafari2012\ParsianPay;
 
 
-use Esijafari2012\ParsianPay\Entities\PeyResult;
+use Esijafari2012\ParsianPay\Entities\PayResult;
 use Esijafari2012\ParsianPay\Entities\ReverseToken;
 
 /**
@@ -15,9 +15,9 @@ class Reverse  extends ParsianIPG
 {
 
     /**
-     * @var PeyResult|null
+     * @var PayResult|null
      */
-    private $pr;
+    private $payResult;
 
     /**
      * Reverse constructor.
@@ -26,7 +26,7 @@ class Reverse  extends ParsianIPG
     public function __construct(string $pin="")
     {
         parent::__construct($pin);
-        $this->pr=null;
+        $this->payResult=null;
     }
 
 
@@ -67,7 +67,7 @@ class Reverse  extends ParsianIPG
 
     /**
      * @param int $token
-     * @return PeyResult|null
+     * @return PayResult|null
      */
     public   function  reverse(int $token)
     {
@@ -76,28 +76,28 @@ class Reverse  extends ParsianIPG
         $rvToken->setToken($token);
 
         $this->payLogger->writeInfo($this->getRequestMessage($rvToken));
-        $this->pr=null;
+        $this->payResult=null;
 
         try {
             $res=$this->reverseRequest($rvToken);
-            $this->pr=new PeyResult( $res);
-            $this->payLogger->writeInfo($this->getResultMessage($this->pr));
+            $this->payResult=new PayResult( $res);
+            $this->payLogger->writeInfo($this->getResultMessage($this->payResult));
         } catch (ParsianErrorException $e) {
-            $this->pr=new PeyResult( [
+            $this->payResult=new PayResult( [
                 'Status' => $e->getCode(),
                 'Token' => $rvToken->getToken(),
                 'Message' => $e->getMessage(),
             ]) ;
-            $this->payLogger->writeError($this->getResultMessage($this->pr));
+            $this->payLogger->writeError($this->getResultMessage($this->payResult));
         } catch (\Exception $e) {
-            $this->pr=new PeyResult( [
+            $this->payResult=new PayResult( [
                 'Status' => -1,
                 'Token' => $rvToken->getToken(),
                 'Message' => self::codeToMessage(-1,$e->getMessage()),
             ]) ;
-            $this->payLogger->writeError($this->getResultMessage($this->pr));
+            $this->payLogger->writeError($this->getResultMessage($this->payResult));
         }
 
-        return  $this->pr;
+        return  $this->payResult;
     }
 }
