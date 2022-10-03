@@ -95,7 +95,7 @@ class Callback  extends ParsianIPG
                 'RRN' => $RRN,
                 'CardNumberMasked' => ''
             ]);
-            $this->plog->writeError($this->getResultMessage($this->confirmResult));
+            $this->payLogger->writeError($this->getResultMessage($this->confirmResult));
         }else {
             $callbackPay = new CallbackPay();
             $callbackPay->setPin($this->pin);
@@ -103,14 +103,14 @@ class Callback  extends ParsianIPG
             $callbackPay->setRRN($RRN);
             $callbackPay->setToken($token);
 
-            $this->plog->writeInfo($this->getRequestMessage($callbackPay));
+            $this->payLogger->writeInfo($this->getRequestMessage($callbackPay));
 
             $this->confirmResult = null;
 
             try {
                 $res = $this->confirmRequest($callbackPay);
                 $this->confirmResult = new  ConfirmResult($res);
-                $this->plog->writeInfo($this->getResultMessage($this->confirmResult));
+                $this->payLogger->writeInfo($this->getResultMessage($this->confirmResult));
             } catch (ParsianErrorException $e) {
                 $this->confirmResult = new  ConfirmResult([
                     'Status' => $callbackPay->getStatus(),
@@ -119,7 +119,7 @@ class Callback  extends ParsianIPG
                     'RRN' => $callbackPay->getRRN(),
                     'CardNumberMasked' => ''
                 ]);
-                $this->plog->writeError($this->getResultMessage($this->confirmResult));
+                $this->payLogger->writeError($this->getResultMessage($this->confirmResult));
             } catch (\Exception $e) {
                 $this->confirmResult = new  ConfirmResult([
                     'Status' => $callbackPay->getStatus(),
@@ -128,7 +128,7 @@ class Callback  extends ParsianIPG
                     'RRN' => $callbackPay->getRRN(),
                     'CardNumberMasked' => ''
                 ]);
-                $this->plog->writeError($this->getResultMessage($this->confirmResult));
+                $this->payLogger->writeError($this->getResultMessage($this->confirmResult));
             }
         }
         return $this->confirmResult;

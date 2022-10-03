@@ -17,7 +17,7 @@ class PayLogger
     /**
      * @var Logger
      */
-    private   $log;
+    private   $logger;
 
 
     /**
@@ -25,8 +25,8 @@ class PayLogger
      */
     public function __construct()
     {
-        $this->log = new Logger('parsianPay');
-        $this->log->pushHandler(new StreamHandler(__DIR__.'/logs/parsianPay.log', Logger::DEBUG));
+        $this->logger = new Logger('parsianPay');
+        $this->logger->pushHandler(new StreamHandler(__DIR__.'/logs/parsianPay.log', Logger::DEBUG));
     }
 
 
@@ -34,7 +34,7 @@ class PayLogger
      * @param string $message
      */
     public function writeWarning(string $message){
-        $this->log->warning($message);
+        $this->logger->warning($message);
     }
 
 
@@ -42,7 +42,7 @@ class PayLogger
      * @param string $message
      */
     public function writeError(string $message){
-        $this->log->error($message);
+        $this->logger->error($message);
     }
 
 
@@ -50,42 +50,42 @@ class PayLogger
      * @param string $message
      */
     public function writeInfo(string $message){
-        $this->log->info($message);
+        $this->logger->info($message);
     }
 
     /**
      * @param string $message
      */
     public function writeNotice(string $message){
-        $this->log->notice($message);
+        $this->logger->notice($message);
     }
 
     /**
      * @param string $message
      */
     public function writeDebug(string $message){
-        $this->log->debug($message);
+        $this->logger->debug($message);
     }
 
     /**
      * @param string $message
      */
     public function writeAlert(string $message){
-        $this->log->alert($message);
+        $this->logger->alert($message);
     }
 
     /**
      * @param string $message
      */
     public function writeCritical(string $message){
-        $this->log->critical($message);
+        $this->logger->critical($message);
     }
 
     /**
      * @param string $message
      */
     public function writeEmergency(string $message){
-        $this->log->emergency($message);
+        $this->logger->emergency($message);
     }
 
 }
