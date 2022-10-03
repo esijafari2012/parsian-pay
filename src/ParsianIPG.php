@@ -22,7 +22,7 @@ class ParsianIPG extends ParsianRequest
     /**
      * @var PayLogger
      */
-    public $plog;
+    public $payLogger;
 
 
     /**
@@ -32,7 +32,7 @@ class ParsianIPG extends ParsianRequest
     public function __construct(string $pin="")
     {
         parent::__construct($pin);
-        $this->plog = new PayLogger();
+        $this->payLogger = new PayLogger();
     }
 
     /**
