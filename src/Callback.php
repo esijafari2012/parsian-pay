@@ -86,7 +86,6 @@ class Callback  extends ParsianIPG
         $RRN = $_POST["RRN"] ?? null;
 
 
-
         if($status==-4||$token==null||$RRN==null){
             $this->confirmResult = new  ConfirmResult([
                 'Status' => $status,

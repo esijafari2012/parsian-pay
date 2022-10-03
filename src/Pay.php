@@ -49,21 +49,17 @@ class Pay extends ParsianIPG
 
         $result = $this->sendRequest($this->sale_url,'SalePaymentRequest',$parameters);
 
-        $Token = $result['SalePaymentRequestResult']['Token'];
+        if(isset($result['SalePaymentRequestResult']['Token']))
+            $Token = $result['SalePaymentRequestResult']['Token'];
+        else $Token=null;
         $Status = $result['SalePaymentRequestResult']['Status'];
         $Message = $result['SalePaymentRequestResult']['Message'];
 
-        if(($Status==0)&&($Token>0)){
-            // update database
-            return array(
-                'Status' => $Status,
-                'Token' => $Token,
-                'Message' => $Message
-            );
-        }else{
-            throw new ParsianErrorException( $Status,$Message);
-        }
-
+        return array(
+            'Status' => $Status,
+            'Token' => $Token,
+            'Message' => $Message
+        );
     }
 
 
@@ -93,14 +89,14 @@ class Pay extends ParsianIPG
         } catch (ParsianErrorException $e) {
             $this->payResult=new PayResult( array(
                 'Status' => $e->getCode(),
-                'Token' => 0,
+                'Token' => null,
                 'Message' => $e->getMessage()
             ));
             $this->payLogger->writeError($this->getResultMessage($this->payResult));
         } catch (\Exception $e) {
             $this->payResult=new PayResult(array(
                 'Status' => $e->getCode(),
-                'Token' => 0,
+                'Token' => null,
                 'Message' => $e->getMessage()
             ));
             $this->payLogger->writeError($this->getResultMessage($this->payResult));
