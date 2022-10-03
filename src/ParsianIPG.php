@@ -60,47 +60,47 @@ class ParsianIPG extends ParsianRequest
     }
 
     /**
-     * @param $rs
+     * @param $request
      * @return string
      */
-    public function getRequestMessage($rs){
+    public function getRequestMessage($request){
         $now = new \DateTime();
         $str=$now->format('Y-m-d H:i:s');
-        if($rs instanceof SalePaymentRequest){
+        if($request instanceof SalePaymentRequest){
             $str=$str." >>  SalePayment Request >> " ;
-            $str=$str." >>  Amount :: ".$rs->getAmount();
-            $str=$str." >>  OrderId :: ".$rs->getOrderId();
-            $str=$str." >>  CallbackUrl :: ".$rs->getCallbackUrl();
-        }elseif ($rs instanceof CallbackPay){
+            $str=$str." >>  Amount :: ".$request->getAmount();
+            $str=$str." >>  OrderId :: ".$request->getOrderId();
+            $str=$str." >>  CallbackUrl :: ".$request->getCallbackUrl();
+        }elseif ($request instanceof CallbackPay){
             $str=$str." >>  ConfirmPayment Request >> " ;
-            $str=$str." >>  Token :: ".$rs->getToken();
-            $str=$str." >>  Status :: ".$rs->getStatus();
-            $str=$str." >>  RRN :: ".$rs->getRRN();
-        }elseif ($rs instanceof ReverseToken){
+            $str=$str." >>  Token :: ".$request->getToken();
+            $str=$str." >>  Status :: ".$request->getStatus();
+            $str=$str." >>  RRN :: ".$request->getRRN();
+        }elseif ($request instanceof ReverseToken){
             $str=$str." >>  Reversal  Request >> " ;
-            $str=$str." >>  Token :: ".$rs->getToken();
+            $str=$str." >>  Token :: ".$request->getToken();
         }
 
         return $str;
     }
 
     /**
-     * @param $rs
+     * @param $result
      * @return string
      */
-    public function getResultMessage($rs){
+    public function getResultMessage($result){
         $now = new \DateTime();
         $str=$now->format('Y-m-d H:i:s');
-        if($rs instanceof PayResult){
-            $str=$str." >>  Token :: ".$rs->getToken();
-            $str=$str." >>  Status :: ".$rs->getStatus();
-            $str=$str." >>  Message :: ".$rs->getMessage();
-        }elseif ($rs instanceof ConfirmResult){
-            $str=$str." >>  Token :: ".$rs->getToken();
-            $str=$str." >>  Status :: ".$rs->getStatus();
-            $str=$str." >>  RRN :: ".$rs->getRRN();
-            $str=$str." >>  CardNumberMasked :: ".$rs->getCardNumberMasked();
-            $str=$str." >>  Message :: ".$rs->getMessage();
+        if($result instanceof PayResult){
+            $str=$str." >>  Token :: ".$result->getToken();
+            $str=$str." >>  Status :: ".$result->getStatus();
+            $str=$str." >>  Message :: ".$result->getMessage();
+        }elseif ($result instanceof ConfirmResult){
+            $str=$str." >>  Token :: ".$result->getToken();
+            $str=$str." >>  Status :: ".$result->getStatus();
+            $str=$str." >>  RRN :: ".$result->getRRN();
+            $str=$str." >>  CardNumberMasked :: ".$result->getCardNumberMasked();
+            $str=$str." >>  Message :: ".$result->getMessage();
         }
         return $str;
     }
