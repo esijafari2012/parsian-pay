@@ -108,8 +108,8 @@ class Callback  extends ParsianIPG
             $this->confirmResult = null;
 
             try {
-                $res = $this->confirmRequest($callbackPay);
-                $this->confirmResult = new  ConfirmResult($res);
+                $result = $this->confirmRequest($callbackPay);
+                $this->confirmResult = new  ConfirmResult($result);
                 $this->payLogger->writeInfo($this->getResultMessage($this->confirmResult));
             } catch (ParsianErrorException $e) {
                 $this->confirmResult = new  ConfirmResult([

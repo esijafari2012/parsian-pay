@@ -79,8 +79,8 @@ class Reverse  extends ParsianIPG
         $this->payResult=null;
 
         try {
-            $res=$this->reverseRequest($rvToken);
-            $this->payResult=new PayResult( $res);
+            $result=$this->reverseRequest($rvToken);
+            $this->payResult=new PayResult( $result);
             $this->payLogger->writeInfo($this->getResultMessage($this->payResult));
         } catch (ParsianErrorException $e) {
             $this->payResult=new PayResult( [

@@ -5,7 +5,7 @@ namespace Esijafari2012\ParsianPay;
 
 
 use Esijafari2012\ParsianPay\Entities\PayResult;
-use Esijafari2012\ParsianPay\Entities\PinPayment;
+use Esijafari2012\ParsianPay\Entities\SalePaymentRequest;
 
 
 /**
@@ -33,18 +33,18 @@ class Pay extends ParsianIPG
 
 
     /**
-     * @param PinPayment $req
+     * @param SalePaymentRequest $salePaymentRequest
      * @return array
      * @throws ParsianErrorException
      */
-    protected function sendPayRequest(PinPayment $req){
+    protected function sendPayRequest(SalePaymentRequest $salePaymentRequest){
 
         $parameters = [
-            'LoginAccount' => $req->getPin(),
-            'Amount' => $req->getAmount(),
-            'OrderId' => $req->getOrderId(),
-            'CallBackUrl' => $req->getCallbackUrl(),
-            'AdditionalData'=> $req->getAdditionalData()
+            'LoginAccount' => $salePaymentRequest->getPin(),
+            'Amount' => $salePaymentRequest->getAmount(),
+            'OrderId' => $salePaymentRequest->getOrderId(),
+            'CallBackUrl' => $salePaymentRequest->getCallbackUrl(),
+            'AdditionalData'=> $salePaymentRequest->getAdditionalData()
         ];
 
         $result = $this->sendRequest($this->sale_url,'SalePaymentRequest',$parameters);
@@ -75,20 +75,20 @@ class Pay extends ParsianIPG
      * @return PayResult|null
      */
     public function payment( $orderId, $amount,string $callbackUrl,string $additionalData="") {
-        $req = new PinPayment();
-        $req->setAmount($amount);
-        $req->setOrderId($orderId);
-        $req->setPin($this->pin);
-        $req->setCallbackUrl($callbackUrl);
-        $req->setAdditionalData($additionalData);
+        $salePaymentRequest = new SalePaymentRequest();
+        $salePaymentRequest->setAmount($amount);
+        $salePaymentRequest->setOrderId($orderId);
+        $salePaymentRequest->setPin($this->pin);
+        $salePaymentRequest->setCallbackUrl($callbackUrl);
+        $salePaymentRequest->setAdditionalData($additionalData);
 
-        $this->payLogger->writeInfo($this->getRequestMessage($req));
+        $this->payLogger->writeInfo($this->getRequestMessage($salePaymentRequest));
 
         $this->payResult=null;
 
         try {
-            $res=$this->sendPayRequest($req);
-            $this->payResult=new PayResult( $res);
+            $result=$this->sendPayRequest($salePaymentRequest);
+            $this->payResult=new PayResult( $result);
             $this->payLogger->writeInfo($this->getResultMessage($this->payResult));
         } catch (ParsianErrorException $e) {
             $this->payResult=new PayResult( array(

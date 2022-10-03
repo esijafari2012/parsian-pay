@@ -6,8 +6,8 @@ namespace Esijafari2012\ParsianPay;
 
 use Esijafari2012\ParsianPay\Entities\CallbackPay;
 use Esijafari2012\ParsianPay\Entities\ConfirmResult;
-use Esijafari2012\ParsianPay\Entities\PeyResult;
-use Esijafari2012\ParsianPay\Entities\PinPayment;
+use Esijafari2012\ParsianPay\Entities\PayResult;
+use Esijafari2012\ParsianPay\Entities\SalePaymentRequest;
 use Esijafari2012\ParsianPay\Entities\ReverseToken;
 use nusoap_client;
 
@@ -66,7 +66,7 @@ class ParsianIPG extends ParsianRequest
     public function getRequestMessage($rs){
         $now = new \DateTime();
         $str=$now->format('Y-m-d H:i:s');
-        if($rs instanceof PinPayment){
+        if($rs instanceof SalePaymentRequest){
             $str=$str." >>  SalePayment Request >> " ;
             $str=$str." >>  Amount :: ".$rs->getAmount();
             $str=$str." >>  OrderId :: ".$rs->getOrderId();
@@ -91,7 +91,7 @@ class ParsianIPG extends ParsianRequest
     public function getResultMessage($rs){
         $now = new \DateTime();
         $str=$now->format('Y-m-d H:i:s');
-        if($rs instanceof PeyResult){
+        if($rs instanceof PayResult){
             $str=$str." >>  Token :: ".$rs->getToken();
             $str=$str." >>  Status :: ".$rs->getStatus();
             $str=$str." >>  Message :: ".$rs->getMessage();
