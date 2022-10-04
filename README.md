@@ -47,18 +47,18 @@ if($confirmResult$confirmResult instanceof ConfirmResult){
 # Example For reverse
 ``` bash
 use Esijafari2012\ParsianPay\Reverse;
-use Esijafari2012\ParsianPay\Entities\PeyResult;
+use Esijafari2012\ParsianPay\Entities\ReversalResult;
 
 $reverse=new Reverse('scsdsdfbdsthsgfnfgndg');//set parsian pin
 $reverse->createLogger();// create logger is optional
-$payResult = $reverse->reverse(12545485);//reverse token payment
+$reversalResult = $reverse->reverse(12545485);//reverse token payment
  
-if($payResult instanceof PayResult){
-    if($payResult->getStatus()==0){
+if($reversalResult instanceof ReversalResult){
+    if($reversalResult->getStatus()==0){
         die(' Reverse Payment OK ');
     }
     
-    echo $payResult->getMessage();
+    echo $reversalResult->getMessage();
 }
 
 
