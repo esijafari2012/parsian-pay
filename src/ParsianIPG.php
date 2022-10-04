@@ -99,10 +99,12 @@ class ParsianIPG extends ParsianRequest
         $now = new \DateTime();
         $str=$now->format('Y-m-d H:i:s');
         if($result instanceof PayResult){
+            $str=$str." >>  SalePayment Result >> " ;
             $str=$str." >>  Token :: ".$result->getToken();
             $str=$str." >>  Status :: ".$result->getStatus();
             $str=$str." >>  Message :: ".$result->getMessage();
         }elseif ($result instanceof ConfirmResult){
+            $str=$str." >>  ConfirmPayment Result >> " ;
             $str=$str." >>  Token :: ".$result->getToken();
             $str=$str." >>  Status :: ".$result->getStatus();
             $str=$str." >>  RRN :: ".$result->getRRN();

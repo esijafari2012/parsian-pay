@@ -57,7 +57,9 @@ if($payResult instanceof PayResult){
     if($payResult->getStatus()==0){
         die(' Reverse Payment OK ');
     }
+    
+    echo $payResult->getMessage();
 }
 
-echo $payResult->getMessage();
+
 ```
