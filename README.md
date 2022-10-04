@@ -32,6 +32,7 @@ use Esijafari2012\ParsianPay\Callback;
 use Esijafari2012\ParsianPay\Entities\ConfirmResult;
   
 $callback=new Callback('scsdsdfbdsthsgfnfgndg');//set parsian pin
+$callback->createLogger();// create logger is optional
 $confirmResult = $callback->confirm();
 if($confirmResult$confirmResult instanceof ConfirmResult){
     if($confirmResult->getStatus() == 0){
@@ -48,14 +49,15 @@ if($confirmResult$confirmResult instanceof ConfirmResult){
 use Esijafari2012\ParsianPay\Reverse;
 use Esijafari2012\ParsianPay\Entities\PeyResult;
 
-$pIPG=new Reverse('scsdsdfbdsthsgfnfgndg');//set parsian pin
-$pr = $pIPG->reverse(12545485);//reverse token payment
+$reverse=new Reverse('scsdsdfbdsthsgfnfgndg');//set parsian pin
+$reverse->createLogger();// create logger is optional
+$payResult = $reverse->reverse(12545485);//reverse token payment
  
-if($pr instanceof PeyResult){
-    if($pr->getStatus()==0){
+if($payResult instanceof PayResult){
+    if($payResult->getStatus()==0){
         die(' Reverse Payment OK ');
     }
 }
 
-echo $pr->getMessage();
+echo $payResult->getMessage();
 ```
