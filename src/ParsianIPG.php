@@ -7,8 +7,9 @@ namespace Esijafari2012\ParsianPay;
 use Esijafari2012\ParsianPay\Entities\ConfirmPaymentRequest;
 use Esijafari2012\ParsianPay\Entities\ConfirmResult;
 use Esijafari2012\ParsianPay\Entities\PayResult;
+use Esijafari2012\ParsianPay\Entities\ReversalResult;
 use Esijafari2012\ParsianPay\Entities\SalePaymentRequest;
-use Esijafari2012\ParsianPay\Entities\ReverseToken;
+use Esijafari2012\ParsianPay\Entities\ReversalRequest;
 use nusoap_client;
 
 
@@ -83,7 +84,7 @@ class ParsianIPG extends ParsianRequest
             $str=$str." >>  Token :: ".$request->getToken();
             $str=$str." >>  Status :: ".$request->getStatus();
             $str=$str." >>  RRN :: ".$request->getRRN();
-        }elseif ($request instanceof ReverseToken){
+        }elseif ($request instanceof ReversalRequest){
             $str=$str." >>  Reversal  Request >> " ;
             $str=$str." >>  Token :: ".$request->getToken();
         }
@@ -110,7 +111,14 @@ class ParsianIPG extends ParsianRequest
             $str=$str." >>  RRN :: ".$result->getRRN();
             $str=$str." >>  CardNumberMasked :: ".$result->getCardNumberMasked();
             $str=$str." >>  Message :: ".$result->getMessage();
+        }elseif ($result instanceof ReversalResult){
+            $str=$str." >>  Reversal  Result >> " ;
+            $str=$str." >>  Token :: ".$result->getToken();
+            $str=$str." >>  Status :: ".$result->getStatus();
+            $str=$str." >>  Message :: ".$result->getMessage();
         }
+
+
         return $str;
     }
 }
