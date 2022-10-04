@@ -30,11 +30,7 @@ class Reverse  extends ParsianIPG
     }
 
 
-    /**
-     * @param ReverseToken $rvToken
-     * @return array
-     * @throws ParsianErrorException
-     */
+
     protected function reverseRequest( ReverseToken $rvToken){
 
         if ($rvToken->getToken() <= 0) {
@@ -54,7 +50,20 @@ class Reverse  extends ParsianIPG
         }
 
         if($status!= '0'){
-            throw new ParsianErrorException( $status);
+            //throw new ParsianErrorException( $status);
+            if(isset($result['ReversalRequestResult']['Token']))
+                $token = $result['ReversalRequestResult']['Token']  ;
+            else
+                $token = null;
+            if(isset($result['ReversalRequestResult']['Message']))
+                $Message = $result['ReversalRequestResult']['Message'] ;
+            else
+                $Message = null;
+            return [
+                'Status' => $status,
+                'Token' => $token,
+                'Message' => $Message,
+            ];
         }else {
             // update database
             return [
@@ -92,9 +101,9 @@ class Reverse  extends ParsianIPG
             $this->payLogger->writeError($this->getResultMessage($this->payResult));
         } catch (\Exception $e) {
             $this->payResult=new PayResult( [
-                'Status' => -1,
+                'Status' =>  $e->getCode(),
                 'Token' => $rvToken->getToken(),
-                'Message' => self::codeToMessage(-1,$e->getMessage()),
+                'Message' => self::codeToMessage( $e->getCode(),$e->getMessage()),
             ]) ;
             $this->payLogger->writeError($this->getResultMessage($this->payResult));
         }

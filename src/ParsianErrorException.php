@@ -14,19 +14,19 @@ class ParsianErrorException extends \Exception
     /**
      * @var int
      */
-    protected $code=-100;
+    protected $code;
 
     /**
      * @var string
      */
-    protected $message = 'خطای بانک.';
+    protected $message ;
 
     /**
      * ParsianErrorException constructor.
      * @param int $code
      * @param string $message
      */
-    public function __construct(int $code = -32768,string $message="")
+    public function __construct(int $code ,string $message="")
     {
         parent::__construct(self::codeToMessage($code,$message), $code);
     }
