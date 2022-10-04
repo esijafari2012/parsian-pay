@@ -5,7 +5,7 @@ namespace Esijafari2012\ParsianPay;
 
 
 use Esijafari2012\ParsianPay\Entities\PayResult;
-use Esijafari2012\ParsianPay\Entities\ReverseToken;
+use Esijafari2012\ParsianPay\Entities\ReversalRequest;
 
 /**
  * Class Reverse
@@ -30,17 +30,21 @@ class Reverse  extends ParsianIPG
     }
 
 
+    /**
+     * @param ReversalRequest $reversalRequest
+     * @return array|false|null[]
+     * @throws ParsianErrorException
+     */
+    protected function reverseRequest( ReversalRequest $reversalRequest){
 
-    protected function reverseRequest( ReverseToken $rvToken){
-
-        if ($rvToken->getToken() <= 0) {
+        if ($reversalRequest->getToken() <= 0) {
             //throw new ParsianErrorException( -2);
             return false;
         }
 
         $parameters = [
-            'LoginAccount' =>  $rvToken->getPin(),
-            'Token' => $rvToken->getToken()
+            'LoginAccount' =>  $reversalRequest->getPin(),
+            'Token' => $reversalRequest->getToken()
         ];
         $result = $this->sendRequest($this->reverse_url,'ReversalRequest',$parameters);
 
@@ -81,28 +85,28 @@ class Reverse  extends ParsianIPG
      */
     public   function  reverse(int $token)
     {
-        $rvToken=new ReverseToken();
-        $rvToken->setPin($this->pin);
-        $rvToken->setToken($token);
+        $reversalRequest=new ReversalRequest();
+        $reversalRequest->setPin($this->pin);
+        $reversalRequest->setToken($token);
 
-        $this->payLogger->writeInfo($this->getRequestMessage($rvToken));
+        $this->payLogger->writeInfo($this->getRequestMessage($reversalRequest));
         $this->payResult=null;
 
         try {
-            $result=$this->reverseRequest($rvToken);
+            $result=$this->reverseRequest($reversalRequest);
             $this->payResult=new PayResult( $result);
             $this->payLogger->writeInfo($this->getResultMessage($this->payResult));
         } catch (ParsianErrorException $e) {
             $this->payResult=new PayResult( [
                 'Status' => $e->getCode(),
-                'Token' => $rvToken->getToken(),
+                'Token' => $reversalRequest->getToken(),
                 'Message' => $e->getMessage(),
             ]) ;
             $this->payLogger->writeError($this->getResultMessage($this->payResult));
         } catch (\Exception $e) {
             $this->payResult=new PayResult( [
                 'Status' =>  $e->getCode(),
-                'Token' => $rvToken->getToken(),
+                'Token' => $reversalRequest->getToken(),
                 'Message' => self::codeToMessage( $e->getCode(),$e->getMessage()),
             ]) ;
             $this->payLogger->writeError($this->getResultMessage($this->payResult));

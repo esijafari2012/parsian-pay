@@ -3,11 +3,12 @@
 
 namespace Esijafari2012\ParsianPay\Entities;
 
+
 /**
- * Class ReverseToken
+ * Class ReversalRequest
  * @package Esijafari2012\ParsianPay\Entities
  */
-class ReverseToken
+class ReversalRequest
 {
 
     /**
