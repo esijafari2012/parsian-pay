@@ -18,11 +18,12 @@ class ConfirmResult
      */
     public function __construct(array $result)
     {
-        $this->Status = Utils::value($result, 'Status', -1);
-        $this->Token = Utils::value($result, 'Token', 0);
-        $this->Message = Utils::value($result, 'Message', '');
-        $this->RRN = Utils::value($result, 'RRN', 0);
-        $this->CardNumberMasked = Utils::value($result, 'CardNumberMasked', '');
+        $result = Utils::arrayToLower($result);
+        $this->Status = Utils::value($result, 'Status' );
+        $this->Token = Utils::value($result, 'Token');
+        $this->Message = Utils::value($result, 'Message');
+        $this->RRN = Utils::value($result, 'RRN');
+        $this->CardNumberMasked = Utils::value($result, 'CardNumberMasked');
     }
 
     /**

@@ -20,7 +20,24 @@ class Utils
      */
     public static function value(array $data, $key, $default = null)
     {
+        $key=strtolower($key);
         return isset($data[$key]) ? $data[$key] : $default;
     }
 
+
+    /**
+     * @param $data
+     * @return array
+     */
+    public static function arrayToLower( $data)
+    {
+        $result=array();
+        if(is_array($data)){
+            foreach ($data as $key=>$item){
+                $key=strtolower($key);
+                $result[$key]=$item;
+            }
+        }
+        return $result;
+    }
 }
