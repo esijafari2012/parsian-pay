@@ -15,7 +15,7 @@ class PayLogger
 {
 
     /**
-     * @var Logger
+     * @var Logger|null
      */
     private   $logger;
 
@@ -25,16 +25,25 @@ class PayLogger
      */
     public function __construct()
     {
-        $this->logger = new Logger('parsianPay');
-        $this->logger->pushHandler(new StreamHandler(__DIR__.'/logs/parsianPay.log', Logger::DEBUG));
+        $this->logger = null;
     }
+
+    /**
+     * @param string $address
+     */
+    public function create(string $address=''){
+        $this->logger = new Logger('parsianPay');
+        if(empty($address)) $address=__DIR__.'/logs/parsianPay.log';
+        $this->logger->pushHandler(new StreamHandler($address, Logger::DEBUG));
+    }
+
 
 
     /**
      * @param string $message
      */
     public function writeWarning(string $message){
-        $this->logger->warning($message);
+        if($this->logger instanceof Logger) $this->logger->warning($message);
     }
 
 
@@ -42,7 +51,7 @@ class PayLogger
      * @param string $message
      */
     public function writeError(string $message){
-        $this->logger->error($message);
+        if($this->logger instanceof Logger) $this->logger->error($message);
     }
 
 
@@ -50,42 +59,42 @@ class PayLogger
      * @param string $message
      */
     public function writeInfo(string $message){
-        $this->logger->info($message);
+        if($this->logger instanceof Logger) $this->logger->info($message);
     }
 
     /**
      * @param string $message
      */
     public function writeNotice(string $message){
-        $this->logger->notice($message);
+        if($this->logger instanceof Logger) $this->logger->notice($message);
     }
 
     /**
      * @param string $message
      */
     public function writeDebug(string $message){
-        $this->logger->debug($message);
+        if($this->logger instanceof Logger) $this->logger->debug($message);
     }
 
     /**
      * @param string $message
      */
     public function writeAlert(string $message){
-        $this->logger->alert($message);
+        if($this->logger instanceof Logger) $this->logger->alert($message);
     }
 
     /**
      * @param string $message
      */
     public function writeCritical(string $message){
-        $this->logger->critical($message);
+        if($this->logger instanceof Logger) $this->logger->critical($message);
     }
 
     /**
      * @param string $message
      */
     public function writeEmergency(string $message){
-        $this->logger->emergency($message);
+        if($this->logger instanceof Logger) $this->logger->emergency($message);
     }
 
 }

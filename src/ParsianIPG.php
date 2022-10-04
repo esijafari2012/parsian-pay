@@ -36,6 +36,13 @@ class ParsianIPG extends ParsianRequest
     }
 
     /**
+     * @param string $address
+     */
+    public function createLogger(string $address=''){
+        $this->payLogger->create($address);
+    }
+
+    /**
      * @param string $url
      * @param string $method
      * @param array $parameters

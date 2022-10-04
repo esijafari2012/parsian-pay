@@ -14,6 +14,7 @@ use Esijafari2012\ParsianPay\Pay;
 use Esijafari2012\ParsianPay\Entities\PayResult;
 
 $pay=new Pay('scsdsdfbdsthsgfnfgndg');//set parsian pin
+$pay->createLogger();// create logger is optional
 $OrderId = (float)(time() . rand(000,999)); // factor number
 $Amount  = 1000; // amount to pay
 $CallbackUrl='http://example.ir/callback' ; // set callback url
