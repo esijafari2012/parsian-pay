@@ -32,12 +32,12 @@ class PayResult
     public $Status;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $Token;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $Message;
 
@@ -52,42 +52,43 @@ class PayResult
     /**
      * @param int $Status
      */
-    public function setStatus(int $Status)
+    public function setStatus(int $Status): void
     {
         $this->Status = $Status;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getToken(): int
+    public function getToken(): ?int
     {
         return $this->Token;
     }
 
     /**
-     * @param int $Token
+     * @param int|null $Token
      */
-    public function setToken(int $Token)
+    public function setToken(?int $Token): void
     {
         $this->Token = $Token;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMessage(): string
+    public function getMessage(): ?string
     {
         return $this->Message;
     }
 
     /**
-     * @param string $Message
+     * @param string|null $Message
      */
-    public function setMessage(string $Message)
+    public function setMessage(?string $Message): void
     {
         $this->Message = $Message;
     }
+
 
 
 }

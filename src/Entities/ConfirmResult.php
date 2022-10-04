@@ -32,22 +32,22 @@ class ConfirmResult
     public $Status;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $Token;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $Message;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $RRN;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $CardNumberMasked;
 
@@ -62,74 +62,75 @@ class ConfirmResult
     /**
      * @param int $Status
      */
-    public function setStatus(int $Status)
+    public function setStatus(int $Status): void
     {
         $this->Status = $Status;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getToken(): int
+    public function getToken(): ?int
     {
         return $this->Token;
     }
 
     /**
-     * @param int $Token
+     * @param int|null $Token
      */
-    public function setToken(int $Token)
+    public function setToken(?int $Token): void
     {
         $this->Token = $Token;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMessage(): string
+    public function getMessage(): ?string
     {
         return $this->Message;
     }
 
     /**
-     * @param string $Message
+     * @param string|null $Message
      */
-    public function setMessage(string $Message)
+    public function setMessage(?string $Message): void
     {
         $this->Message = $Message;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getRRN(): int
+    public function getRRN(): ?int
     {
         return $this->RRN;
     }
 
     /**
-     * @param int $RRN
+     * @param int|null $RRN
      */
-    public function setRRN(int $RRN)
+    public function setRRN(?int $RRN): void
     {
         $this->RRN = $RRN;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCardNumberMasked(): string
+    public function getCardNumberMasked(): ?string
     {
         return $this->CardNumberMasked;
     }
 
     /**
-     * @param string $CardNumberMasked
+     * @param string|null $CardNumberMasked
      */
-    public function setCardNumberMasked(string $CardNumberMasked)
+    public function setCardNumberMasked(?string $CardNumberMasked): void
     {
         $this->CardNumberMasked = $CardNumberMasked;
     }
+
 
 
 

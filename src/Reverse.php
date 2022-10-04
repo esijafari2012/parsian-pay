@@ -97,7 +97,9 @@ class Reverse  extends ParsianIPG
             if($result!=false) {
                 $this->reversalResult = new ReversalResult($result);
                 $this->payLogger->writeInfo($this->getResultMessage($this->reversalResult));
-            }return  false;
+            }else{
+                return  false;
+            }
         } catch (ParsianErrorException $e) {
             $this->reversalResult=new ReversalResult( [
                 'Status' => $e->getCode(),
