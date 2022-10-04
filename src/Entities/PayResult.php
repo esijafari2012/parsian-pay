@@ -19,9 +19,10 @@ class PayResult
      */
     public function __construct(array $result)
     {
-        $this->Status = Utils::value($result, 'Status', -1);
-        $this->Token = Utils::value($result, 'Token', 0);
-        $this->Message = Utils::value($result, 'Message', '');
+        $result = Utils::arrayToLower($result);
+        $this->Status = Utils::value($result, 'Status');
+        $this->Token = Utils::value($result, 'Token' );
+        $this->Message = Utils::value($result, 'Message');
     }
 
 
